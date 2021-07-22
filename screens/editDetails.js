@@ -64,10 +64,10 @@ const addPatientPage = ({navigation}) => {
           />
         </TouchableOpacity>
 
-        <Text style={styles.heading}>Add Patient</Text>
+        <Text style={styles.heading}>edit details</Text>
         {/* <TouchableOpacity onPress={()=>addPatient() }> */}
-        <TouchableOpacity>
-          <Text style={styles.save}>Add</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("patientDetails")}>
+          <Text style={styles.save}>save</Text>
         </TouchableOpacity>
       </View>
 
