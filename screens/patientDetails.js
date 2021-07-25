@@ -15,10 +15,20 @@ import {
 } from "react-native";
 import { Card, TextInput, Button } from "react-native-paper";
 import { Icon, SocialIcon, ListItem, Avatar } from "react-native-elements";
-// import * as firebase from 'firebase'
+import * as firebase from "firebase";
 
-const patientDetails = ({ navigation }) => {
+const patientDetails = ({ navigation, route }) => {
   const win = Dimensions.get("window");
+  const {
+    patientgender,
+    address,
+    age,
+    patientId,
+    name,
+    phoneNumber,
+    visitDate,
+  } = route.params;
+
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -41,13 +51,25 @@ const patientDetails = ({ navigation }) => {
           />
         </TouchableOpacity>
         <Text style={styles.heading}>Patient Details</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("editDetails")}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("editDetails", {
+              patientgender,
+              address,
+              age,
+              patientId,
+              name,
+              phoneNumber,
+              visitDate,
+            })
+          }
+        >
           <Text style={styles.save}>edit</Text>
         </TouchableOpacity>
       </View>
       <Card style={styles.cardContainer}>
         <ScrollView>
-        <Card style={styles.personalDetails}>
+          <Card style={styles.personalDetails}>
             <View style={styles.personalDetails}>
               <Text style={styles.detailsText}>Personal Details</Text>
               <Text style={styles.textField}>Name</Text>
@@ -55,14 +77,14 @@ const patientDetails = ({ navigation }) => {
                 style={styles.genderIcon}
                 source={require("../assets/images/gender.png")}
               />
-              <Text style={styles.textValueField}>Japmeet Singh</Text>
+              <Text style={styles.textValueField}>{name}</Text>
               <View style={styles.ruler}></View>
               <Text style={styles.textField}>Patient Id</Text>
               <Image
                 style={styles.genderIcon}
                 source={require("../assets/images/id.png")}
               />
-              <Text style={styles.textValueField}>2022</Text>
+              <Text style={styles.textValueField}>{patientId}</Text>
               <View style={styles.ruler}></View>
               <Text style={styles.textField}>Date of Visit</Text>
               <Text style={styles.ageText}>Age</Text>
@@ -70,36 +92,38 @@ const patientDetails = ({ navigation }) => {
                 style={styles.dobIcon}
                 source={require("../assets/images/dob.png")}
               />
-              <Text style={styles.textValueField}>20/06/2001</Text>
-              <Text style={styles.ageValueText}>20</Text>
+              <Text style={styles.textValueField}>{visitDate}</Text>
+              <Text style={styles.ageValueText}>{age}</Text>
               <View style={styles.ruler}></View>
               <Text style={styles.textField}>Gender</Text>
               <Image
                 style={styles.genderIcon}
                 source={require("../assets/images/gender.png")}
               />
-              <Text style={styles.textValueField}>Male</Text>
+              <Text style={styles.textValueField}>{patientgender}</Text>
               <View style={styles.ruler}></View>
               <Text style={styles.textField}>Phone No</Text>
               <Image
                 style={styles.phoneIcon}
                 source={require("../assets/images/phone.png")}
               />
-              <Text style={styles.textValueField}>9501512055</Text>
+              <Text style={styles.textValueField}>{phoneNumber}</Text>
               <View style={styles.ruler}></View>
               <Text style={styles.textField}>E-mail id</Text>
               <Image
                 style={styles.emailIcon}
                 source={require("../assets/images/email.png")}
               />
-              <Text style={styles.textValueField}>japmeet01@gmail.commmmmmmmm</Text>
+              <Text style={styles.textValueField}>
+                japmeet01@gmail.commmmmmmmm
+              </Text>
               <View style={styles.ruler}></View>
               <Text style={styles.textField}>Address</Text>
               <Image
                 style={styles.addressIcon}
                 source={require("../assets/images/address.png")}
               />
-              <Text style={styles.textValueField}># 70/1,Sector 125, Mohali</Text>
+              <Text style={styles.textValueField}>{address}</Text>
             </View>
           </Card>
           <Card style={styles.medicalDetails}>
@@ -166,7 +190,7 @@ const patientDetails = ({ navigation }) => {
                 style={styles.bloodGroupIcon}
                 source={require("../assets/images/dosage.png")}
               />
-              <Text style={styles.textValueField}>Twice</Text>              
+              <Text style={styles.textValueField}>Twice</Text>
             </View>
           </Card>
         </ScrollView>
@@ -197,12 +221,11 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
   },
-  cardContainer:{
-    marginTop:160,
-    marginBottom:50,
+  cardContainer: {
+    marginTop: 160,
+    marginBottom: 50,
     backgroundColor: "#E5E5E5",
-    elevation:0,
-
+    elevation: 0,
   },
   personalDetails: {
     position: "relative",
@@ -309,7 +332,6 @@ const styles = StyleSheet.create({
     position: "relative",
     marginLeft: "9%",
     marginBottom: "-.6%",
-    
   },
   addressIcon: {
     width: 19,
@@ -317,7 +339,7 @@ const styles = StyleSheet.create({
     position: "relative",
     marginLeft: "9%",
     marginBottom: ".6%",
-    top:10,
+    top: 10,
   },
   heightIcon: {
     width: 23,
@@ -349,8 +371,7 @@ const styles = StyleSheet.create({
     color: "red",
     marginLeft: "8%",
     marginBottom: "3%",
-  }
-
+  },
 });
 
 export default patientDetails;

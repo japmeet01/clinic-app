@@ -15,32 +15,45 @@ import {
 } from "react-native";
 import { Card, TextInput, Button } from "react-native-paper";
 import { Icon, SocialIcon, ListItem, Avatar } from "react-native-elements";
-// import * as firebase from 'firebase'
+import * as firebase from "firebase";
 
-
-
-const addPatientPage = ({navigation}) => {
+const addPatientPage = ({ navigation }) => {
   const win = Dimensions.get("window");
   const [Name, setName] = useState("");
-  const [Id, setId] = useState("");
   const [userPhone, setUserPhone] = useState("");
   const [userAddress, setUserAddress] = useState("");
   const [userAge, setUserAge] = useState("");
   const [visitDate, setVisitDate] = useState("");
   const [userGender, setUserGender] = useState("");
 
-  // function addPatient(){
-  //   const patientInfo=firebase.database().ref('patientInfo');
-  //   patientInfo.push().set({
-  //     patientName:Name,
-  //     id:Id,
-  //     phoneNumber:userPhone,
-  //     address:userAddress,
-  //     age:userAge,
-  //     visitDate:visitDate,
-  //     Gender:userGender,
-  //   })
-  // }
+  function addPatient() {
+    const patientInfo = firebase.database().ref("patientInfo");
+    patientInfo.child(Id).set({
+      patientName: Name,
+      id: Id,
+      phoneNumber: userPhone,
+      address: userAddress,
+      age: userAge,
+      visitDate: visitDate,
+      Gender: userGender,
+    });
+    Alert.alert("Success", "Patient Added Successfully.", [{ text: "OK" }]);
+  }
+
+  const [Id, setId] = useState("");
+
+  function check() {
+    if (Id !== "") {
+      var ref = firebase.database().ref("patientInfo");
+      ref.once("value").then(function (snapshot) {
+        var b = snapshot.child(Id).exists();
+        if (b) {
+          Alert.alert("Alert", "Patient Id already exists.", [{ text: "OK" }]);
+        }
+      });
+    }
+  }
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -63,10 +76,8 @@ const addPatientPage = ({navigation}) => {
             size={30}
           />
         </TouchableOpacity>
-
         <Text style={styles.heading}>Add Patient</Text>
-        {/* <TouchableOpacity onPress={()=>addPatient() }> */}
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => addPatient()} onPressIn={() => navigation.navigate("Home")} >
           <Text style={styles.save}>Add</Text>
         </TouchableOpacity>
       </View>
@@ -85,6 +96,7 @@ const addPatientPage = ({navigation}) => {
             keyboardType="number-pad"
             value={Id}
             onChangeText={(text) => setId(text)}
+            onSubmitEditing={() => check()}
             mode="outlined"
             style={styles.input}
           />

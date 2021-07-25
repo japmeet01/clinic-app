@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useFonts } from "expo-font";
 import AppLoading from "expo-app-loading";
-// import * as firebase from 'firebase'
+import * as firebase from "firebase";
 import Home from "./screens/homePage";
 import editDetails from "./screens/editDetails";
 import searchPage from "./screens/searchPage";
@@ -11,13 +11,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 const Stack = createStackNavigator();
 
-// import {firebaseConfig} from './config'
+import { firebaseConfig } from "./config";
 
-// firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
 function App() {
   return (
-    
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
@@ -45,10 +44,10 @@ export default () => {
   if (!fontsLoaded) {
     return <AppLoading />;
   } else {
-  return (
-    <NavigationContainer>
-      <App />
-    </NavigationContainer>
-  );
+    return (
+      <NavigationContainer>
+        <App />
+      </NavigationContainer>
+    );
   }
 };

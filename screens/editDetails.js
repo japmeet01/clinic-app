@@ -15,32 +15,43 @@ import {
 } from "react-native";
 import { Card, TextInput, Button } from "react-native-paper";
 import { Icon, SocialIcon, ListItem, Avatar } from "react-native-elements";
-// import * as firebase from 'firebase'
+import * as firebase from 'firebase'
 
 
 
-const addPatientPage = ({navigation}) => {
+const addPatientPage = ({navigation,route}) => {
   const win = Dimensions.get("window");
-  const [Name, setName] = useState("");
-  const [Id, setId] = useState("");
-  const [userPhone, setUserPhone] = useState("");
-  const [userAddress, setUserAddress] = useState("");
-  const [userAge, setUserAge] = useState("");
-  const [visitDate, setVisitDate] = useState("");
-  const [userGender, setUserGender] = useState("");
+  const {
+    patientgender,
+    address,
+    age,
+    patientId,
+    name,
+    phoneNumber,
+    visitDate,
+  } = route.params;
+  const [Name, setName] = useState(name);
+  const [Id, setId] = useState(patientId);
+  const [userPhone, setUserPhone] = useState(phoneNumber);
+  const [userAddress, setUserAddress] = useState(address);
+  const [userAge, setUserAge] = useState(age);
+  const [patientvisitDate, setVisitDate] = useState(visitDate);
+  const [userGender, setUserGender] = useState(patientgender);
 
-  // function addPatient(){
-  //   const patientInfo=firebase.database().ref('patientInfo');
-  //   patientInfo.push().set({
-  //     patientName:Name,
-  //     id:Id,
-  //     phoneNumber:userPhone,
-  //     address:userAddress,
-  //     age:userAge,
-  //     visitDate:visitDate,
-  //     Gender:userGender,
-  //   })
-  // }
+   function editData() {
+    const patientInfo = firebase.database().ref("patientInfo");
+    patientInfo.child(Id).set({
+      patientName: Name,
+      id: Id,
+      phoneNumber: userPhone,
+      address: userAddress,
+      age: userAge,
+      visitDate: patientvisitDate,
+      Gender: userGender,
+    });
+    Alert.alert("Success", "Details Updated Succesfully", [{ text: "OK" }]);
+    navigation.navigate("Home");
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,7 +65,7 @@ const addPatientPage = ({navigation}) => {
         source={require("../assets/images/topbackground.png")}
       />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+        <TouchableOpacity onPress={() => navigation.navigate("patientDetails")}>
           <Icon
             name="arrow-left"
             type="font-awesome-5"
@@ -65,8 +76,7 @@ const addPatientPage = ({navigation}) => {
         </TouchableOpacity>
 
         <Text style={styles.heading}>edit details</Text>
-        {/* <TouchableOpacity onPress={()=>addPatient() }> */}
-        <TouchableOpacity onPress={() => navigation.navigate("patientDetails")}>
+        <TouchableOpacity onPress={() => editData()}>
           <Text style={styles.save}>save</Text>
         </TouchableOpacity>
       </View>
@@ -113,7 +123,7 @@ const addPatientPage = ({navigation}) => {
           />
           <TextInput
             label="Date of Visit (DD/MM/YYYY)"
-            value={visitDate}
+            value={patientvisitDate}
             onChangeText={(text) => setVisitDate(text)}
             mode="outlined"
             style={styles.input}
