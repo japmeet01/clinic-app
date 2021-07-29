@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "clinic",
-    "slug": "clinic",
+    "name": "Clinic App",
+    "slug": "clinic-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,10 +23,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.japmeet01.clinicapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": ""
   }
 }

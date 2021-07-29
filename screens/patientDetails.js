@@ -27,6 +27,17 @@ const patientDetails = ({ navigation, route }) => {
     name,
     phoneNumber,
     visitDate,
+    email,
+    history,
+    CO,
+    diagnosis,
+    treatment1,
+    dosage1,
+    treatment2,
+    dosage2,
+    treatment3,
+    dosage3,
+    doctorSuggestion,
   } = route.params;
 
   return (
@@ -61,6 +72,17 @@ const patientDetails = ({ navigation, route }) => {
               name,
               phoneNumber,
               visitDate,
+              email,
+              history,
+              CO,
+              diagnosis,
+              treatment1,
+              dosage1,
+              treatment2,
+              dosage2,
+              treatment3,
+              dosage3,
+              doctorSuggestion
             })
           }
         >
@@ -69,130 +91,217 @@ const patientDetails = ({ navigation, route }) => {
       </View>
       <Card style={styles.cardContainer}>
         <ScrollView>
-          <Card style={styles.personalDetails}>
-            <View style={styles.personalDetails}>
-              <Text style={styles.detailsText}>Personal Details</Text>
-              <Text style={styles.textField}>Name</Text>
-              <Image
-                style={styles.genderIcon}
-                source={require("../assets/images/gender.png")}
+          <Text style={styles.detailsText}>Personal Details</Text>
+          <View style={styles.row}>
+            <View>
+              <TextInput
+                label="Patient id"
+                value={patientId}
+                editable={false}
+                mode="outlined"
+                style={styles.inputid}
+                left={
+                  <TextInput.Icon
+                    name="card-account-details-outline"
+                    color="grey"
+                  />
+                }
               />
-              <Text style={styles.textValueField}>{name}</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>Patient Id</Text>
-              <Image
-                style={styles.genderIcon}
-                source={require("../assets/images/id.png")}
-              />
-              <Text style={styles.textValueField}>{patientId}</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>Date of Visit</Text>
-              <Text style={styles.ageText}>Age</Text>
-              <Image
-                style={styles.dobIcon}
-                source={require("../assets/images/dob.png")}
-              />
-              <Text style={styles.textValueField}>{visitDate}</Text>
-              <Text style={styles.ageValueText}>{age}</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>Gender</Text>
-              <Image
-                style={styles.genderIcon}
-                source={require("../assets/images/gender.png")}
-              />
-              <Text style={styles.textValueField}>{patientgender}</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>Phone No</Text>
-              <Image
-                style={styles.phoneIcon}
-                source={require("../assets/images/phone.png")}
-              />
-              <Text style={styles.textValueField}>{phoneNumber}</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>E-mail id</Text>
-              <Image
-                style={styles.emailIcon}
-                source={require("../assets/images/email.png")}
-              />
-              <Text style={styles.textValueField}>
-                japmeet01@gmail.commmmmmmmm
-              </Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>Address</Text>
-              <Image
-                style={styles.addressIcon}
-                source={require("../assets/images/address.png")}
-              />
-              <Text style={styles.textValueField}>{address}</Text>
             </View>
-          </Card>
-          <Card style={styles.medicalDetails}>
-            <View style={styles.medicalDetails}>
-              <Text style={styles.detailsText}>Medical Details</Text>
-              <Text style={styles.textField}>Patient History</Text>
-              <Image
-                style={styles.heightIcon}
-                source={require("../assets/images/history.png")}
+            <View>
+              <TextInput
+                label="Visit Date"
+                value={visitDate}
+                editable={false}
+                mode="outlined"
+                style={styles.inputDate}
+                left={
+                  <TextInput.Icon name="calendar-month-outline" color="grey" />
+                }
               />
-              <Text style={styles.textValueField}>Hypertension</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>C/O</Text>
-              <Image
-                style={styles.weightIcon}
-                source={require("../assets/images/weight.png")}
-              />
-              <Text style={styles.textValueField}>Itching</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>Diagnosis</Text>
-              <Image
-                style={styles.bloodGroupIcon}
-                source={require("../assets/images/dosage.png")}
-              />
-              <Text style={styles.textValueField}>Myopia</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.treatment}>Treatment-1</Text>
-              <Image
-                style={styles.bloodGroupIcon}
-                source={require("../assets/images/treatment.png")}
-              />
-              <Text style={styles.textValueField}>Oflus</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>Dosage-1</Text>
-              <Image
-                style={styles.bloodGroupIcon}
-                source={require("../assets/images/dosage.png")}
-              />
-              <Text style={styles.textValueField}>1 Time in a Day(OD)</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.treatment}>Treatment-2</Text>
-              <Image
-                style={styles.bloodGroupIcon}
-                source={require("../assets/images/treatment.png")}
-              />
-              <Text style={styles.textValueField}>Tinic</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>Dosage-2</Text>
-              <Image
-                style={styles.bloodGroupIcon}
-                source={require("../assets/images/dosage.png")}
-              />
-              <Text style={styles.textValueField}>1 Time in a Day(OD)</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.treatment}>Treatment-3</Text>
-              <Image
-                style={styles.bloodGroupIcon}
-                source={require("../assets/images/treatment.png")}
-              />
-              <Text style={styles.textValueField}>Zyflur</Text>
-              <View style={styles.ruler}></View>
-              <Text style={styles.textField}>Dosage-3</Text>
-              <Image
-                style={styles.bloodGroupIcon}
-                source={require("../assets/images/dosage.png")}
-              />
-              <Text style={styles.textValueField}>Twice</Text>
             </View>
-          </Card>
+          </View>
+
+          <TextInput
+            label="Patient Name"
+            value={name}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            left={<TextInput.Icon name="shield-account-outline" color="grey" />}
+          />
+          <View style={styles.row}>
+            <View>
+              <TextInput
+                label="Age"
+                value={age}
+                editable={false}
+                mode="outlined"
+                style={styles.inputAge}
+              />
+            </View>
+            <View>
+              <TextInput
+                label="Gender"
+                value={patientgender}
+                editable={false}
+                mode="outlined"
+                style={styles.inputgender}
+              />
+            </View>
+          </View>
+          <TextInput
+            label="Phone Number"
+            value={phoneNumber}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            left={<TextInput.Icon name="cellphone-basic" color="grey" />}
+          />
+          <View style={styles.emailHead}>
+          <Icon name="email-open-outline" color="grey" type="material-community"/>
+          <Text style={styles.emaill}>Email</Text>
+          </View>
+          
+          <TextInput
+            placeholder="Email"
+            value={email}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <View style={styles.emailHead}>
+          <Icon name="map-marker-radius-outline" color="grey" type="material-community"/>
+          <Text style={styles.emaill}>Address</Text>
+          </View>
+          <TextInput
+            placeholder="Address"
+            value={address}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <Text style={styles.detailsText}>Medical Details</Text>
+
+          <View style={styles.emailHead}>
+          <Icon name="account-clock-outline" color="grey" type="material-community"/>
+          <Text style={styles.emaill}>Patient History</Text>
+          </View>
+          <TextInput
+            placeholder="Patient History"
+            value={history}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <View style={styles.emailHead}>
+          <Icon name="alert-decagram-outline" color="grey" type="material-community"/>
+          <Text style={styles.emaill}>C/O</Text>
+          </View>
+          <TextInput
+            placeholder="C/O"
+            value={CO}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <View style={styles.emailHead}>
+          <Icon name="doctor" color="grey" type="material-community"/>
+          <Text style={styles.emaill}>Diagnosis</Text>
+          </View>
+          <TextInput
+            placeholder="Diagnosis"
+            value={diagnosis}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <View style={styles.emailHead}>
+          <Icon name="alarm-light-outline" color="grey" type="material-community"/>
+          <Text style={styles.treatment}>Treatment-1</Text>
+          </View>
+          <TextInput
+            placeholder="Treatment-1"
+            value={treatment1}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <View style={styles.emailHead}>
+          <Icon name="progress-clock" color="grey" type="material-community"/>
+          <Text style={styles.emaill}>Dosage-1</Text>
+          </View>
+          <TextInput
+            placeholder="Dosage-1"
+            value={dosage1}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <View style={styles.emailHead}>
+          <Icon name="alarm-light-outline" color="grey" type="material-community"/>
+          <Text style={styles.treatment}>Treatment-2</Text>
+          </View>
+          <TextInput
+            placeholder="Treatment-2"
+            value={treatment2}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <View style={styles.emailHead}>
+          <Icon name="progress-clock" color="grey" type="material-community"/>
+          <Text style={styles.emaill}>Dosage-2</Text>
+          </View>
+          <TextInput
+            placeholder="Dosage-2"
+            value={dosage2}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <View style={styles.emailHead}>
+          <Icon name="alarm-light-outline" color="grey" type="material-community"/>
+          <Text style={styles.treatment}>Treatment-3</Text>
+          </View>
+          <TextInput
+            placeholder="Treatment-3"
+            value={treatment3}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <View style={styles.emailHead}>
+          <Icon name="progress-clock" color="grey" type="material-community"/>
+          <Text style={styles.emaill}>Dosage-3</Text>
+          </View>
+          <TextInput
+            placeholder="Dosage-3"
+            value={dosage3}
+            editable={false}
+            mode="outlined"
+            style={styles.inputname}
+            multiline={true}
+          />
+          <TextInput
+            label="Suggestion"
+            value={doctorSuggestion}
+            editable={false}
+            mode="outlined"
+            multiline={true}
+            style={styles.inputname}
+          />
+
         </ScrollView>
       </Card>
     </SafeAreaView>
@@ -222,155 +331,55 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   cardContainer: {
-    marginTop: 160,
-    marginBottom: 50,
-    backgroundColor: "#E5E5E5",
-    elevation: 0,
-  },
-  personalDetails: {
-    position: "relative",
     width: "90%",
-    marginBottom: "8%",
-    marginLeft: "5%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 37,
-    marginTop: 30,
+    borderRadius: 20,
+    position: "absolute",
+    top: 160,
+    padding: 15,
+    paddingBottom: 25,
+    height: 530,
   },
-  medicalDetails: {
-    width: "90%",
-    marginTop: 20,
-    marginLeft: "5%",
-    marginBottom: 28,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 37,
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20,
   },
-  ruler: {
-    position: "relative",
-    width: "90%",
-    height: 0,
-    marginLeft: "5%",
-    borderWidth: 0.5,
-    borderColor: "#C0C0C0",
-    marginBottom: "3%",
-    marginTop: "3%",
-  },
+
   detailsText: {
     fontFamily: "Salsa-Regular",
     fontSize: 25,
     lineHeight: 31,
     color: "red",
-    marginLeft: "8%",
     marginTop: "7%",
-    marginBottom: "3%",
+    marginBottom: "5%",
   },
-  textField: {
-    fontFamily: "Calibri-Regular",
-    fontStyle: "normal",
-    fontWeight: "normal",
-    fontSize: 23,
-    lineHeight: 28,
-    color: "#8B8B8B",
-    marginLeft: "8%",
-    marginBottom: "3%",
+  inputDate: {
+    width: 150,
   },
-  textValueField: {
-    position: "relative",
-    fontFamily: "Roboto-Regular",
-    fontStyle: "normal",
-    fontWeight: "normal",
-    fontSize: 20,
-    lineHeight: 23,
-    color: "#000000",
-    marginLeft: "20%",
-    marginTop: "-8%",
+  inputid: {
+    width: 100,
   },
-  dobIcon: {
-    width: 20,
-    height: 20,
-    position: "relative",
-    marginLeft: "9%",
-    marginTop: "6%",
+  inputname: {
+    marginBottom: 20,
   },
-  genderIcon: {
-    width: 20,
-    height: 20,
-    position: "relative",
-    marginLeft: "9%",
-    marginBottom: ".8%",
+  inputAge: {
+    width: 100,
   },
-  ageText: {
-    position: "relative",
-    fontFamily: "Calibri-Regular",
-    fontStyle: "normal",
-    fontWeight: "normal",
-    fontSize: 23,
-    lineHeight: 28,
-    color: "#8B8B8B",
-    marginLeft: "70%",
-    marginTop: "-14%",
+  inputgender: {
+    width: 150,
   },
-  ageValueText: {
-    fontFamily: "Roboto-Regular",
-    fontStyle: "normal",
-    fontWeight: "normal",
-    fontSize: 20,
-    lineHeight: 23,
-    color: "#000000",
-    marginLeft: "70%",
-    marginTop: "-9%",
+  emailHead:{
+    flexDirection:"row",
+    alignItems:"center",
   },
-  phoneIcon: {
-    width: 20,
-    height: 20,
-    position: "relative",
-    marginLeft: "9%",
-    marginBottom: ".6%",
+  emaill:{
+    marginLeft:5,
+    color: "grey"
   },
-  emailIcon: {
-    width: 24,
-    height: 24,
-    position: "relative",
-    marginLeft: "9%",
-    marginBottom: "-.6%",
-  },
-  addressIcon: {
-    width: 19,
-    height: 25,
-    position: "relative",
-    marginLeft: "9%",
-    marginBottom: ".6%",
-    top: 10,
-  },
-  heightIcon: {
-    width: 23,
-    height: 23,
-    position: "relative",
-    marginLeft: "9%",
-    marginBottom: ".5%",
-  },
-  weightIcon: {
-    width: 22,
-    height: 22,
-    position: "relative",
-    marginLeft: "9%",
-    marginBottom: ".8%",
-  },
-  bloodGroupIcon: {
-    width: 30,
-    height: 27,
-    position: "relative",
-    marginLeft: "7.5%",
-    marginBottom: "-.2%",
-  },
-  treatment: {
-    fontFamily: "Calibri-Regular",
-    fontStyle: "normal",
-    fontWeight: "normal",
-    fontSize: 23,
-    lineHeight: 28,
-    color: "red",
-    marginLeft: "8%",
-    marginBottom: "3%",
+  treatment:{
+    marginLeft:5,
+    color: "red"
   },
 });
 
