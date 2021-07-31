@@ -14,12 +14,19 @@ import {
   Alert,
   LogBox,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Card, TextInput, Button } from "react-native-paper";
 import { Icon, SocialIcon, ListItem, Avatar } from "react-native-elements";
 import * as firebase from "firebase";
 import MultiSelect from "react-native-multiple-select";
 import DropDownPicker from "react-native-dropdown-picker";
+import dosagee from "../dosage";
+import treatmentt from "../treatment";
+import historyy from "../history";
+import COO from "../CO";
+import diagnosiss from "../diagnosis";
+import DatePicker from "react-native-date-picker";
 
 const addPatientPage = ({ navigation }) => {
   const win = Dimensions.get("window");
@@ -27,653 +34,86 @@ const addPatientPage = ({ navigation }) => {
   const [userPhone, setUserPhone] = useState("");
   const [userAddress, setUserAddress] = useState("");
   const [userAge, setUserAge] = useState("");
-  const [visitDate, setVisitDate] = useState("");
   const [userGender, setUserGender] = useState("");
   const [email, setEmail] = useState("");
   const [suggestion, setSuggestion] = useState("");
+
+  //date time picker
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+  const [visitDate, setVisitDate] = useState("");
+  const [visitTime, setVisitTime] = useState("");
+
+  const onChange = (event, selectedDate) => {
+    setShow(false);
+    const currentDate = selectedDate || date;
+    setDate(currentDate);
+    if(event.type == "set") {
+      let tempDate = new Date(currentDate);
+      let fDate =
+        tempDate.getDate() +
+        "-" +
+        (tempDate.getMonth() + 1) +
+        "-" +
+        tempDate.getFullYear();
+      let ftime = tempDate.getHours() + ":" + tempDate.getMinutes();
+      setVisitDate(fDate);
+      setVisitTime(ftime);
+  } else {
+      return;
+  } 
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
   // patient history dropdown
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState([]);
-  const [items, setItems] = useState([
-    { label: "Hypertension", value: "Hypertension" },
-    { label: "Sugar", value: "Sugar" },
-    { label: "Long Term Medication", value: "Long Term Medication" },
-    { label: "PreMedicine", value: "PreMedicine" },
-    { label: "Thyroid", value: "Thyroid" },
-    { label: "Arthiritis", value: "Arthiritis" },
-    { label: "No relevant History", value: "No relevant History" },
-  ]);
+  const [items, setItems] = useState(historyy);
 
   // C/O
   const [openCO, setOpenCO] = useState(false);
   const [valueCO, setValueCO] = useState([]);
-  const [itemsCO, setItemsCO] = useState([
-    { label: "Decrease Vision", value: "Decrease Vision" },
-    { label: "Blurred Vision", value: "Blurred Vision" },
-    { label: "Headache", value: "Headache" },
-    { label: "Itching", value: "Itching" },
-    { label: "Pain", value: "Pain" },
-    { label: "Redness", value: "Redness" },
-    { label: "Discharge", value: "Discharge" },
-    { label: "Irritation", value: "Irritation" },
-    { label: "Foreign Body Sensation", value: "Foreign Body Sensation" },
-    { label: "Foreign Body", value: "Foreign Body" },
-    { label: "Heaviness", value: "Heaviness" },
-    { label: "Watering", value: "Watering" },
-    { label: "Eye Ache", value: "Eye Ache" },
-    { label: "Sudden Loss Of Vision", value: "Sudden Loss Of Vision" },
-    { label: "Night Blindness", value: "Night Blindness" },
-  ]);
+  const [itemsCO, setItemsCO] = useState(COO);
 
   // Diagnosis
   const [openDiagnosis, setOpenDiagnosis] = useState(false);
   const [valueDiagnosis, setValueDiagnosis] = useState([]);
-  const [itemsDiagnosis, setItemsDiagnosis] = useState([
-    { label: "Allergy Conjuctivitis", value: "Allergy Conjustivitis" },
-    { label: "Conjuctivitis", value: "Conjuctivitis" },
-    { label: "Viral Conjuctivitis", value: "Viral Conjuctivitis" },
-    {
-      label: "Vernal KeratoConjuctivitis (Spring catarrh)",
-      value: "Vernal KeratoConjuctivitis (Spring catarrh)",
-    },
-    { label: "Refractive Errors", value: "Refractive Errors" },
-    { label: "Myopia", value: "Myopia" },
-    { label: "High-Myopia", value: "High-Myopia" },
-    { label: "Hypermatropia", value: "Hypermatropia" },
-    { label: "Astigmatism", value: "Astigmatism" },
-    { label: "Presbyopia", value: "Presbyopia" },
-    { label: "No Acceptance of Glasses", value: "No Acceptance of Glasses" },
-    { label: "Dry Eyes", value: "Dry Eyes" },
-    { label: "Computer Vision Syndrome", value: "Computer Vision Syndrome" },
-    { label: "Blepharitis", value: "Blepharitis" },
-    { label: "trachoma", value: "trachoma" },
-    {
-      label: "Age related Macular Degeneration",
-      value: "Age related Macular Degeneration",
-    },
-    { label: "Cataract", value: "Cataract" },
-    { label: "Diabetic Retinopathy", value: "Diabetic Retinopathy" },
-    { label: "Glaucoma", value: "Glaucoma" },
-    { label: "Amblyopia", value: "Amblyopia" },
-    { label: "Keratitis", value: "Keratitis" },
-    { label: "Ocular herpes", value: "Ocular herpes" },
-    { label: "herpes zoster", value: "herpes zoster" },
-    { label: "Corneal dystrophies", value: "Corneal dystrophies" },
-    { label: "Keratoconus", value: "Keratoconus" },
-    { label: "Corneal Ulcer", value: "Corneal Ulcer" },
-    { label: "Bullous keratopathy", value: "Bullous keratopathy" },
-    { label: "Cogan Syndrome", value: "Cogan Syndrome" },
-    { label: "Interstitial keratitis", value: "Interstitial keratitis" },
-    { label: "KeratoConjuctivitis sicca", value: "KeratoConjuctivitis sicca" },
-    { label: "Keratomalacia", value: "Keratomalacia" },
-    {
-      label: "Peripheral ulcerative keratitis",
-      value: "Peripheral ulcerative keratitis",
-    },
-    {
-      label: "Phlyctenular keratoconjuctivitis",
-      value: "Phlyctenular keratoconjuctivitis",
-    },
-    {
-      label: "Superficial punctate keratitis",
-      value: "Superficial punctate keratitis",
-    },
-    { label: "CRVO", value: "CRVO" },
-    { label: "BRVO", value: "BRVO" },
-    { label: "RD", value: "RD" },
-    { label: "CSME", value: "CSME" },
-    { label: "CSMD", value: "CSMD" },
-  ]);
+  const [itemsDiagnosis, setItemsDiagnosis] = useState(diagnosiss);
 
   // treatment-1
   const [openTreatment1, setOpenTreatment1] = useState(false);
   const [valueTreatment1, setValueTreatment1] = useState([]);
-  const [itemsTreatment1, setItemsTreatment1] = useState([
-    { label: "OFLUS", value: "OFLUS" },
-    { label: "GATFLOS", value: "GATFLOS" },
-    { label: "MOFLUS-T", value: "MOFLUS-T" },
-    { label: "MOFLUS", value: "MOFLUS" },
-    { label: "TINIC", value: "TINIC" },
-    { label: "ANANAC", value: "ANANAC" },
-    { label: "KETEXO", value: "KETEXO" },
-    { label: "MOFLUS-KT", value: "MOFLUS-KT" },
-    { label: "OKULAC", value: "OKULAC" },
-    { label: "OKULAC-D", value: "OKULAC-D" },
-    { label: "OKULAC-AH", value: "OKULAC-AH" },
-    { label: "ZYFLUR", value: "ZYFLUR" },
-    { label: "MOFLUS-BR", value: "MOFLUS-BR" },
-    { label: "OKULAC-LS", value: "OKULAC-LS" },
-    { label: "GATFLOS-F", value: "GATFLOS-F" },
-    { label: "ACT-ONE250", value: "ACT-ONE250" },
-    { label: "TIMOLUS-BT", value: "TIMOLUS-BT" },
-    { label: "GATFLOS-B", value: "GATFLOS-B" },
-    { label: "HOLIF", value: "HOLIF" },
-    { label: "HOLIF-T", value: "HOLIF-T" },
-    { label: "MOFLUS-B", value: "MOFLUS-B" },
-    { label: "OFLUS-D", value: "OFLUS-D" },
-    { label: "P-REX-B", value: "P-REX-B" },
-    { label: "MOFLUS-LT", value: "MOFLUS-LT" },
-    { label: "LAPT", value: "LAPT" },
-    { label: "PREXO", value: "PREXO" },
-    { label: "MOFLUS-P", value: "MOFLUS-P" },
-    { label: "MOFLUS-D", value: "MOFLUS-D" },
-    { label: "HYON-C", value: "HYON-C" },
-    { label: "NATOK", value: "NATOK" },
-    { label: "CUCOLUS", value: "CUCOLUS" },
-    { label: "PATINE", value: "PATINE" },
-    { label: "PUPILOWIDE", value: "PUPILOWIDE" },
-    { label: "CATLUS", value: "CATLUS" },
-    { label: "STAY SOFT", value: "STAY SOFT" },
-    { label: "CARMOS", value: "CARMOS" },
-    { label: "CARMOS GEL", value: "CARMOS GEL" },
-    { label: "CARMOS-LS", value: "CARMOS-LS" },
-    { label: "CARMOS-PLUS", value: "CARMOS-PLUS" },
-    { label: "H-MOS", value: "H-MOS" },
-    { label: "OSS", value: "OSS" },
-    { label: "LYOK-5000", value: "LYOK-5000" },
-    { label: "LYOK-VIT", value: "LYOK-VIT" },
-    { label: "VITLUS", value: "VITLUS" },
-    { label: "LYOKPLUS", value: "LYOKPLUS" },
-    { label: "SIGHTSOFT", value: "SIGHTSOFT" },
-    { label: "ME9X-OD", value: "ME9X-OD" },
-    { label: "AIMS", value: "AIMS" },
-    { label: "AIMS-OD", value: "AIMS-OD" },
-    { label: "AIMS-KT", value: "AIMS-KT" },
-    { label: "HPNC", value: "HPNC" },
-    { label: "HPNC PLUS", value: "HPNC PLUS" },
-    { label: "ROMAG", value: "ROMAG" },
-    { label: "ACLON-P", value: "ACLON-P" },
-    { label: "ACLON-SP", value: "ACLON-SP" },
-    { label: "ADD-5", value: "ADD-5" },
-    { label: "RIOS", value: "RIOS" },
-    { label: "RIOS PLUS", value: "RIOS PLUS" },
-    { label: "DEFLUS-6", value: "DEFLUS-6" },
-    { label: "FEXOLUS-M", value: "FEXOLUS-M" },
-    { label: "GABLUS-M", value: "GABLUS-M" },
-    { label: "CFDM-200", value: "CFDM-200" },
-    { label: "ROXUS-150", value: "ROXUS-150" },
-    { label: "DRYCURE", value: "DRYCURE" },
-    { label: "DRYCURE GEL", value: "DRYCURE GEL" },
-    { label: "DRYCURE ULTRA", value: "DRYCURE ULTRA" },
-    { label: "MCN", value: "MCN" },
-    { label: "MCN KT", value: "MCN KT" },
-    { label: "NEFACURE", value: "NEFACURE" },
-    { label: "KETCURE-CP", value: "KETCURE-CP" },
-    { label: "FLUROCURE-T", value: "FLUROCURE-T" },
-    { label: "PATACURE", value: "PATACURE" },
-    { label: "CATACURE", value: "CATACURE" },
-    { label: "TIMCURE", value: "TIMCURE" },
-    { label: "LYCURE", value: "LYCURE" },
-    { label: "FANDUS", value: "FANDUS" },
-    { label: "CATASOL", value: "CATASOL" },
-    { label: "HUMOX", value: "HUMOX" },
-    { label: "OPTOBS", value: "OPTOBS" },
-    { label: "HUCIN-P", value: "HUCIN-P" },
-    { label: "TEARIN", value: "TEARIN" },
-    { label: "HUNAC", value: "HUNAC" },
-    { label: "HUCROM", value: "HUCROM" },
-    { label: "ALTEARS", value: "ALTEARS" },
-    { label: "OCLAC", value: "OCLAC" },
-    { label: "DR-SONI-P", value: "DR-SONI-P" },
-    { label: "FLUTON", value: "FLUTON" },
-    { label: "HUMOX-K", value: "HUMOX-K" },
-    { label: "VIBS", value: "VIBS" },
-    { label: "HUDIN", value: "HUDIN" },
-    { label: "AKXN", value: "AKXN" },
-    { label: "ATPINE", value: "ATPINE" },
-    { label: "B-FAX", value: "B-FAX" },
-    { label: "B-MOX", value: "B-MOX" },
-    { label: "CLODIL", value: "CLODIL" },
-    { label: "DD", value: "DD" },
-    { label: "DEPOL", value: "DEPOL" },
-    { label: "FLUROM", value: "FLUROM" },
-    { label: "FLUROM-T", value: "FLUROM-T" },
-    { label: "GATSAR", value: "GATSAR" },
-    { label: "GSP", value: "GSP" },
-    { label: "GLUMA", value: "GLUMA" },
-    { label: "HYLUR", value: "HYLUR" },
-    { label: "I-BRO", value: "I-BRO" },
-    { label: "IFAX", value: "IFAX" },
-    { label: "IFAX-D", value: "IFAX-D" },
-    { label: "KEMAC", value: "KEMAC" },
-    { label: "KEMAC-D", value: "KEMAC-D" },
-    { label: "KEMAC-M", value: "KEMAC-M" },
-    { label: "LENSACT", value: "LENSACT" },
-    { label: "LOTEMIL", value: "LOTEMIL" },
-    { label: "MILINEUM", value: "MILINEUM" },
-    { label: "MYGIC", value: "MYGIC" },
-    { label: "NPF", value: "NPF" },
-    { label: "NTM", value: "NTM" },
-    { label: "OPEDE", value: "OPEDE" },
-    { label: "PREDSAR", value: "PREDSAR" },
-    { label: "PROCAINE", value: "PROCAINE" },
-    { label: "POVICARE", value: "POVICARE" },
-    { label: "PG-AQUA", value: "PG-AQUA" },
-    { label: "REAL TEARS", value: "REAL TEARS" },
-    { label: "SOCL", value: "SOCL" },
-    { label: "TEARFILM", value: "TEARFILM" },
-    { label: "TEARFILM GEL", value: "TEARFILM GEL" },
-    { label: "TORBIS", value: "TORBIS" },
-    { label: "ZED+B-FAX", value: "ZED+B-FAX" },
-    { label: "MILINIUM", value: "MILINIUM" },
-    { label: "REAL GEL", value: "REAL GEL" },
-    { label: "ATEASE-10", value: "ATEASE-10" },
-    { label: "ASDM", value: "ASDM" },
-    { label: "OPT", value: "OPT" },
-    { label: "SOURCE", value: "SOURCE" },
-    { label: "SEE ON", value: "SEE ON" },
-    { label: "SEE MEGA", value: "SEE MEGA" },
-    { label: "PROTIMES", value: "PROTIMES" },
-    { label: "AKSHCARE", value: "AKSHCARE" },
-    { label: "ALOTE", value: "ALOTE" },
-    { label: "AYURFAX", value: "AYURFAX" },
-  ]);
+  const [itemsTreatment1, setItemsTreatment1] = useState(treatmentt);
 
   // Dosage-1
   const [openDosage1, setOpenDosage1] = useState(false);
   const [valueDosage1, setValueDosage1] = useState([]);
-  const [itemsDosage1, setItemsDosage1] = useState([
-    { label: "1 time in a day(OD)", value: "1 time in a day(OD)" },
-    { label: "2 times a day(BD)", value: "2 times a day(BD)" },
-    { label: "3 times a day", value: "3 times a day" },
-    { label: "4 times a day", value: "4 times a day" },
-    { label: "5 times a day", value: "5 times a day" },
-    { label: "Bed time", value: "Bed time" },
-    {
-      label: "Surgical case after every 2 hours",
-      value: "Surgical case after every 2 hours",
-    },
-    {
-      label: "Surgical case after every 4 hours",
-      value: "Surgical case after every 4 hours",
-    },
-    {
-      label: "Surgical case after every 6 hours",
-      value: "Surgical case after every 6 hours",
-    },
-    {
-      label: "Injection case after every 2 hours",
-      value: "injection case after every 2 hours",
-    },
-    {
-      label: "injection case after every 4 hours",
-      value: "injection case after every 4 hours",
-    },
-    {
-      label: "injection case after every 6 hours",
-      value: "injection case after every 6 hours",
-    },
-    { label: "SOS", value: "SOS" },
-    { label: "Other", value: "other" },
-    { label: "NA", value: "NA" },
-  ]);
+  const [itemsDosage1, setItemsDosage1] = useState(dosagee);
 
   // treatment-2
   const [openTreatment2, setOpenTreatment2] = useState(false);
   const [valueTreatment2, setValueTreatment2] = useState([]);
-  const [itemsTreatment2, setItemsTreatment2] = useState([
-    { label: "OFLUS", value: "OFLUS" },
-    { label: "GATFLOS", value: "GATFLOS" },
-    { label: "MOFLUS-T", value: "MOFLUS-T" },
-    { label: "MOFLUS", value: "MOFLUS" },
-    { label: "TINIC", value: "TINIC" },
-    { label: "ANANAC", value: "ANANAC" },
-    { label: "KETEXO", value: "KETEXO" },
-    { label: "MOFLUS-KT", value: "MOFLUS-KT" },
-    { label: "OKULAC", value: "OKULAC" },
-    { label: "OKULAC-D", value: "OKULAC-D" },
-    { label: "OKULAC-AH", value: "OKULAC-AH" },
-    { label: "ZYFLUR", value: "ZYFLUR" },
-    { label: "MOFLUS-BR", value: "MOFLUS-BR" },
-    { label: "OKULAC-LS", value: "OKULAC-LS" },
-    { label: "GATFLOS-F", value: "GATFLOS-F" },
-    { label: "ACT-ONE250", value: "ACT-ONE250" },
-    { label: "TIMOLUS-BT", value: "TIMOLUS-BT" },
-    { label: "GATFLOS-B", value: "GATFLOS-B" },
-    { label: "HOLIF", value: "HOLIF" },
-    { label: "HOLIF-T", value: "HOLIF-T" },
-    { label: "MOFLUS-B", value: "MOFLUS-B" },
-    { label: "OFLUS-D", value: "OFLUS-D" },
-    { label: "P-REX-B", value: "P-REX-B" },
-    { label: "MOFLUS-LT", value: "MOFLUS-LT" },
-    { label: "LAPT", value: "LAPT" },
-    { label: "PREXO", value: "PREXO" },
-    { label: "MOFLUS-P", value: "MOFLUS-P" },
-    { label: "MOFLUS-D", value: "MOFLUS-D" },
-    { label: "HYON-C", value: "HYON-C" },
-    { label: "NATOK", value: "NATOK" },
-    { label: "CUCOLUS", value: "CUCOLUS" },
-    { label: "PATINE", value: "PATINE" },
-    { label: "PUPILOWIDE", value: "PUPILOWIDE" },
-    { label: "CATLUS", value: "CATLUS" },
-    { label: "STAY SOFT", value: "STAY SOFT" },
-    { label: "CARMOS", value: "CARMOS" },
-    { label: "CARMOS GEL", value: "CARMOS GEL" },
-    { label: "CARMOS-LS", value: "CARMOS-LS" },
-    { label: "CARMOS-PLUS", value: "CARMOS-PLUS" },
-    { label: "H-MOS", value: "H-MOS" },
-    { label: "OSS", value: "OSS" },
-    { label: "LYOK-5000", value: "LYOK-5000" },
-    { label: "LYOK-VIT", value: "LYOK-VIT" },
-    { label: "VITLUS", value: "VITLUS" },
-    { label: "LYOKPLUS", value: "LYOKPLUS" },
-    { label: "SIGHTSOFT", value: "SIGHTSOFT" },
-    { label: "ME9X-OD", value: "ME9X-OD" },
-    { label: "AIMS", value: "AIMS" },
-    { label: "AIMS-OD", value: "AIMS-OD" },
-    { label: "AIMS-KT", value: "AIMS-KT" },
-    { label: "HPNC", value: "HPNC" },
-    { label: "HPNC PLUS", value: "HPNC PLUS" },
-    { label: "ROMAG", value: "ROMAG" },
-    { label: "ACLON-P", value: "ACLON-P" },
-    { label: "ACLON-SP", value: "ACLON-SP" },
-    { label: "ADD-5", value: "ADD-5" },
-    { label: "RIOS", value: "RIOS" },
-    { label: "RIOS PLUS", value: "RIOS PLUS" },
-    { label: "DEFLUS-6", value: "DEFLUS-6" },
-    { label: "FEXOLUS-M", value: "FEXOLUS-M" },
-    { label: "GABLUS-M", value: "GABLUS-M" },
-    { label: "CFDM-200", value: "CFDM-200" },
-    { label: "ROXUS-150", value: "ROXUS-150" },
-    { label: "DRYCURE", value: "DRYCURE" },
-    { label: "DRYCURE GEL", value: "DRYCURE GEL" },
-    { label: "DRYCURE ULTRA", value: "DRYCURE ULTRA" },
-    { label: "MCN", value: "MCN" },
-    { label: "MCN KT", value: "MCN KT" },
-    { label: "NEFACURE", value: "NEFACURE" },
-    { label: "KETCURE-CP", value: "KETCURE-CP" },
-    { label: "FLUROCURE-T", value: "FLUROCURE-T" },
-    { label: "PATACURE", value: "PATACURE" },
-    { label: "CATACURE", value: "CATACURE" },
-    { label: "TIMCURE", value: "TIMCURE" },
-    { label: "LYCURE", value: "LYCURE" },
-    { label: "FANDUS", value: "FANDUS" },
-    { label: "CATASOL", value: "CATASOL" },
-    { label: "HUMOX", value: "HUMOX" },
-    { label: "OPTOBS", value: "OPTOBS" },
-    { label: "HUCIN-P", value: "HUCIN-P" },
-    { label: "TEARIN", value: "TEARIN" },
-    { label: "HUNAC", value: "HUNAC" },
-    { label: "HUCROM", value: "HUCROM" },
-    { label: "ALTEARS", value: "ALTEARS" },
-    { label: "OCLAC", value: "OCLAC" },
-    { label: "DR-SONI-P", value: "DR-SONI-P" },
-    { label: "FLUTON", value: "FLUTON" },
-    { label: "HUMOX-K", value: "HUMOX-K" },
-    { label: "VIBS", value: "VIBS" },
-    { label: "HUDIN", value: "HUDIN" },
-    { label: "AKXN", value: "AKXN" },
-    { label: "ATPINE", value: "ATPINE" },
-    { label: "B-FAX", value: "B-FAX" },
-    { label: "B-MOX", value: "B-MOX" },
-    { label: "CLODIL", value: "CLODIL" },
-    { label: "DD", value: "DD" },
-    { label: "DEPOL", value: "DEPOL" },
-    { label: "FLUROM", value: "FLUROM" },
-    { label: "FLUROM-T", value: "FLUROM-T" },
-    { label: "GATSAR", value: "GATSAR" },
-    { label: "GSP", value: "GSP" },
-    { label: "GLUMA", value: "GLUMA" },
-    { label: "HYLUR", value: "HYLUR" },
-    { label: "I-BRO", value: "I-BRO" },
-    { label: "IFAX", value: "IFAX" },
-    { label: "IFAX-D", value: "IFAX-D" },
-    { label: "KEMAC", value: "KEMAC" },
-    { label: "KEMAC-D", value: "KEMAC-D" },
-    { label: "KEMAC-M", value: "KEMAC-M" },
-    { label: "LENSACT", value: "LENSACT" },
-    { label: "LOTEMIL", value: "LOTEMIL" },
-    { label: "MILINEUM", value: "MILINEUM" },
-    { label: "MYGIC", value: "MYGIC" },
-    { label: "NPF", value: "NPF" },
-    { label: "NTM", value: "NTM" },
-    { label: "OPEDE", value: "OPEDE" },
-    { label: "PREDSAR", value: "PREDSAR" },
-    { label: "PROCAINE", value: "PROCAINE" },
-    { label: "POVICARE", value: "POVICARE" },
-    { label: "PG-AQUA", value: "PG-AQUA" },
-    { label: "REAL TEARS", value: "REAL TEARS" },
-    { label: "SOCL", value: "SOCL" },
-    { label: "TEARFILM", value: "TEARFILM" },
-    { label: "TEARFILM GEL", value: "TEARFILM GEL" },
-    { label: "TORBIS", value: "TORBIS" },
-    { label: "ZED+B-FAX", value: "ZED+B-FAX" },
-    { label: "MILINIUM", value: "MILINIUM" },
-    { label: "REAL GEL", value: "REAL GEL" },
-    { label: "ATEASE-10", value: "ATEASE-10" },
-    { label: "ASDM", value: "ASDM" },
-    { label: "OPT", value: "OPT" },
-    { label: "SOURCE", value: "SOURCE" },
-    { label: "SEE ON", value: "SEE ON" },
-    { label: "SEE MEGA", value: "SEE MEGA" },
-    { label: "PROTIMES", value: "PROTIMES" },
-    { label: "AKSHCARE", value: "AKSHCARE" },
-    { label: "ALOTE", value: "ALOTE" },
-    { label: "AYURFAX", value: "AYURFAX" },
-  ]);
+  const [itemsTreatment2, setItemsTreatment2] = useState(treatmentt);
 
   // Dosage-2
   const [openDosage2, setOpenDosage2] = useState(false);
   const [valueDosage2, setValueDosage2] = useState([]);
-  const [itemsDosage2, setItemsDosage2] = useState([
-    { label: "1 time in a day(OD)", value: "1 time in a day(OD)" },
-    { label: "2 times a day(BD)", value: "2 times a day(BD)" },
-    { label: "3 times a day", value: "3 times a day" },
-    { label: "4 times a day", value: "4 times a day" },
-    { label: "5 times a day", value: "5 times a day" },
-    { label: "Bed time", value: "Bed time" },
-    {
-      label: "Surgical case after every 2 hours",
-      value: "Surgical case after every 2 hours",
-    },
-    {
-      label: "Surgical case after every 4 hours",
-      value: "Surgical case after every 4 hours",
-    },
-    {
-      label: "Surgical case after every 6 hours",
-      value: "Surgical case after every 6 hours",
-    },
-    {
-      label: "Injection case after every 2 hours",
-      value: "injection case after every 2 hours",
-    },
-    {
-      label: "injection case after every 4 hours",
-      value: "injection case after every 4 hours",
-    },
-    {
-      label: "injection case after every 6 hours",
-      value: "injection case after every 6 hours",
-    },
-    { label: "SOS", value: "SOS" },
-    { label: "Other", value: "other" },
-    { label: "NA", value: "NA" },
-  ]);
+  const [itemsDosage2, setItemsDosage2] = useState(dosagee);
 
   // treatment-3
   const [openTreatment3, setOpenTreatment3] = useState(false);
   const [valueTreatment3, setValueTreatment3] = useState([]);
-  const [itemsTreatment3, setItemsTreatment3] = useState([
-    { label: "OFLUS", value: "OFLUS" },
-    { label: "GATFLOS", value: "GATFLOS" },
-    { label: "MOFLUS-T", value: "MOFLUS-T" },
-    { label: "MOFLUS", value: "MOFLUS" },
-    { label: "TINIC", value: "TINIC" },
-    { label: "ANANAC", value: "ANANAC" },
-    { label: "KETEXO", value: "KETEXO" },
-    { label: "MOFLUS-KT", value: "MOFLUS-KT" },
-    { label: "OKULAC", value: "OKULAC" },
-    { label: "OKULAC-D", value: "OKULAC-D" },
-    { label: "OKULAC-AH", value: "OKULAC-AH" },
-    { label: "ZYFLUR", value: "ZYFLUR" },
-    { label: "MOFLUS-BR", value: "MOFLUS-BR" },
-    { label: "OKULAC-LS", value: "OKULAC-LS" },
-    { label: "GATFLOS-F", value: "GATFLOS-F" },
-    { label: "ACT-ONE250", value: "ACT-ONE250" },
-    { label: "TIMOLUS-BT", value: "TIMOLUS-BT" },
-    { label: "GATFLOS-B", value: "GATFLOS-B" },
-    { label: "HOLIF", value: "HOLIF" },
-    { label: "HOLIF-T", value: "HOLIF-T" },
-    { label: "MOFLUS-B", value: "MOFLUS-B" },
-    { label: "OFLUS-D", value: "OFLUS-D" },
-    { label: "P-REX-B", value: "P-REX-B" },
-    { label: "MOFLUS-LT", value: "MOFLUS-LT" },
-    { label: "LAPT", value: "LAPT" },
-    { label: "PREXO", value: "PREXO" },
-    { label: "MOFLUS-P", value: "MOFLUS-P" },
-    { label: "MOFLUS-D", value: "MOFLUS-D" },
-    { label: "HYON-C", value: "HYON-C" },
-    { label: "NATOK", value: "NATOK" },
-    { label: "CUCOLUS", value: "CUCOLUS" },
-    { label: "PATINE", value: "PATINE" },
-    { label: "PUPILOWIDE", value: "PUPILOWIDE" },
-    { label: "CATLUS", value: "CATLUS" },
-    { label: "STAY SOFT", value: "STAY SOFT" },
-    { label: "CARMOS", value: "CARMOS" },
-    { label: "CARMOS GEL", value: "CARMOS GEL" },
-    { label: "CARMOS-LS", value: "CARMOS-LS" },
-    { label: "CARMOS-PLUS", value: "CARMOS-PLUS" },
-    { label: "H-MOS", value: "H-MOS" },
-    { label: "OSS", value: "OSS" },
-    { label: "LYOK-5000", value: "LYOK-5000" },
-    { label: "LYOK-VIT", value: "LYOK-VIT" },
-    { label: "VITLUS", value: "VITLUS" },
-    { label: "LYOKPLUS", value: "LYOKPLUS" },
-    { label: "SIGHTSOFT", value: "SIGHTSOFT" },
-    { label: "ME9X-OD", value: "ME9X-OD" },
-    { label: "AIMS", value: "AIMS" },
-    { label: "AIMS-OD", value: "AIMS-OD" },
-    { label: "AIMS-KT", value: "AIMS-KT" },
-    { label: "HPNC", value: "HPNC" },
-    { label: "HPNC PLUS", value: "HPNC PLUS" },
-    { label: "ROMAG", value: "ROMAG" },
-    { label: "ACLON-P", value: "ACLON-P" },
-    { label: "ACLON-SP", value: "ACLON-SP" },
-    { label: "ADD-5", value: "ADD-5" },
-    { label: "RIOS", value: "RIOS" },
-    { label: "RIOS PLUS", value: "RIOS PLUS" },
-    { label: "DEFLUS-6", value: "DEFLUS-6" },
-    { label: "FEXOLUS-M", value: "FEXOLUS-M" },
-    { label: "GABLUS-M", value: "GABLUS-M" },
-    { label: "CFDM-200", value: "CFDM-200" },
-    { label: "ROXUS-150", value: "ROXUS-150" },
-    { label: "DRYCURE", value: "DRYCURE" },
-    { label: "DRYCURE GEL", value: "DRYCURE GEL" },
-    { label: "DRYCURE ULTRA", value: "DRYCURE ULTRA" },
-    { label: "MCN", value: "MCN" },
-    { label: "MCN KT", value: "MCN KT" },
-    { label: "NEFACURE", value: "NEFACURE" },
-    { label: "KETCURE-CP", value: "KETCURE-CP" },
-    { label: "FLUROCURE-T", value: "FLUROCURE-T" },
-    { label: "PATACURE", value: "PATACURE" },
-    { label: "CATACURE", value: "CATACURE" },
-    { label: "TIMCURE", value: "TIMCURE" },
-    { label: "LYCURE", value: "LYCURE" },
-    { label: "FANDUS", value: "FANDUS" },
-    { label: "CATASOL", value: "CATASOL" },
-    { label: "HUMOX", value: "HUMOX" },
-    { label: "OPTOBS", value: "OPTOBS" },
-    { label: "HUCIN-P", value: "HUCIN-P" },
-    { label: "TEARIN", value: "TEARIN" },
-    { label: "HUNAC", value: "HUNAC" },
-    { label: "HUCROM", value: "HUCROM" },
-    { label: "ALTEARS", value: "ALTEARS" },
-    { label: "OCLAC", value: "OCLAC" },
-    { label: "DR-SONI-P", value: "DR-SONI-P" },
-    { label: "FLUTON", value: "FLUTON" },
-    { label: "HUMOX-K", value: "HUMOX-K" },
-    { label: "VIBS", value: "VIBS" },
-    { label: "HUDIN", value: "HUDIN" },
-    { label: "AKXN", value: "AKXN" },
-    { label: "ATPINE", value: "ATPINE" },
-    { label: "B-FAX", value: "B-FAX" },
-    { label: "B-MOX", value: "B-MOX" },
-    { label: "CLODIL", value: "CLODIL" },
-    { label: "DD", value: "DD" },
-    { label: "DEPOL", value: "DEPOL" },
-    { label: "FLUROM", value: "FLUROM" },
-    { label: "FLUROM-T", value: "FLUROM-T" },
-    { label: "GATSAR", value: "GATSAR" },
-    { label: "GSP", value: "GSP" },
-    { label: "GLUMA", value: "GLUMA" },
-    { label: "HYLUR", value: "HYLUR" },
-    { label: "I-BRO", value: "I-BRO" },
-    { label: "IFAX", value: "IFAX" },
-    { label: "IFAX-D", value: "IFAX-D" },
-    { label: "KEMAC", value: "KEMAC" },
-    { label: "KEMAC-D", value: "KEMAC-D" },
-    { label: "KEMAC-M", value: "KEMAC-M" },
-    { label: "LENSACT", value: "LENSACT" },
-    { label: "LOTEMIL", value: "LOTEMIL" },
-    { label: "MILINEUM", value: "MILINEUM" },
-    { label: "MYGIC", value: "MYGIC" },
-    { label: "NPF", value: "NPF" },
-    { label: "NTM", value: "NTM" },
-    { label: "OPEDE", value: "OPEDE" },
-    { label: "PREDSAR", value: "PREDSAR" },
-    { label: "PROCAINE", value: "PROCAINE" },
-    { label: "POVICARE", value: "POVICARE" },
-    { label: "PG-AQUA", value: "PG-AQUA" },
-    { label: "REAL TEARS", value: "REAL TEARS" },
-    { label: "SOCL", value: "SOCL" },
-    { label: "TEARFILM", value: "TEARFILM" },
-    { label: "TEARFILM GEL", value: "TEARFILM GEL" },
-    { label: "TORBIS", value: "TORBIS" },
-    { label: "ZED+B-FAX", value: "ZED+B-FAX" },
-    { label: "MILINIUM", value: "MILINIUM" },
-    { label: "REAL GEL", value: "REAL GEL" },
-    { label: "ATEASE-10", value: "ATEASE-10" },
-    { label: "ASDM", value: "ASDM" },
-    { label: "OPT", value: "OPT" },
-    { label: "SOURCE", value: "SOURCE" },
-    { label: "SEE ON", value: "SEE ON" },
-    { label: "SEE MEGA", value: "SEE MEGA" },
-    { label: "PROTIMES", value: "PROTIMES" },
-    { label: "AKSHCARE", value: "AKSHCARE" },
-    { label: "ALOTE", value: "ALOTE" },
-    { label: "AYURFAX", value: "AYURFAX" },
-  ]);
+  const [itemsTreatment3, setItemsTreatment3] = useState(treatmentt);
 
   // Dosage-3
   const [openDosage3, setOpenDosage3] = useState(false);
   const [valueDosage3, setValueDosage3] = useState([]);
-  const [itemsDosage3, setItemsDosage3] = useState([
-    { label: "1 time in a day(OD)", value: "1 time in a day(OD)" },
-    { label: "2 times a day(BD)", value: "2 times a day(BD)" },
-    { label: "3 times a day", value: "3 times a day" },
-    { label: "4 times a day", value: "4 times a day" },
-    { label: "5 times a day", value: "5 times a day" },
-    { label: "Bed time", value: "Bed time" },
-    {
-      label: "Surgical case after every 2 hours",
-      value: "Surgical case after every 2 hours",
-    },
-    {
-      label: "Surgical case after every 4 hours",
-      value: "Surgical case after every 4 hours",
-    },
-    {
-      label: "Surgical case after every 6 hours",
-      value: "Surgical case after every 6 hours",
-    },
-    {
-      label: "Injection case after every 2 hours",
-      value: "injection case after every 2 hours",
-    },
-    {
-      label: "injection case after every 4 hours",
-      value: "injection case after every 4 hours",
-    },
-
-    {
-      label: "injection case after every 6 hours",
-      value: "injection case after every 6 hours",
-    },
-    { label: "SOS", value: "SOS" },
-    { label: "Other", value: "other" },
-    { label: "NA", value: "NA" },
-  ]);
+  const [itemsDosage3, setItemsDosage3] = useState(dosagee);
 
   const onOpen = useCallback(() => {
     setOpenCO(false);
@@ -769,8 +209,8 @@ const addPatientPage = ({ navigation }) => {
   }, []);
 
   function addPatient() {
-    if (Id == "" || Name == "" || userPhone == "") {
-      Alert.alert("Error", "ID,Name or Phone Number cannot be blank.", [
+    if (Id == "" || Name == "" || visitDate==""||visitTime==""||userPhone==""||userAddress==""||userAge==""||userGender==""||email=="") {
+      Alert.alert("Error", "General details cannot be empty.", [
         { text: "OK" },
       ]);
     } else {
@@ -784,16 +224,17 @@ const addPatientPage = ({ navigation }) => {
             ]);
           } else {
             const patientInfo = firebase.database().ref("patientInfo");
-            patientInfo.child(Id).set({
+            patientInfo.child(Id).child(visitDate).child(visitTime).set({
               patientName: Name,
               id: Id,
               phoneNumber: userPhone,
               address: userAddress,
               age: userAge,
               visitDate: visitDate,
+              visitTime:visitTime,
               Gender: userGender,
               Email: email,
-              Suggestion:suggestion,
+              Suggestion: suggestion,
               history: value,
               CO: valueCO,
               Diagnosis: valueDiagnosis,
@@ -803,6 +244,16 @@ const addPatientPage = ({ navigation }) => {
               dosage2: valueDosage2,
               treatment3: valueTreatment3,
               dosage3: valueDosage3,
+            });
+
+            patientInfo.child(Id).update({
+              patientName: Name,
+              id: Id,
+              phoneNumber: userPhone,
+              address: userAddress,
+              age: userAge,
+              Gender: userGender,
+              Email: email,
             });
             Alert.alert("Success", "Patient Added Successfully.", [
               { text: "OK" },
@@ -883,11 +334,11 @@ const addPatientPage = ({ navigation }) => {
             mode="outlined"
             style={styles.input}
             left={
-                  <TextInput.Icon
-                    name="card-account-details-outline"
-                    color="grey"
-                  />
-                }
+              <TextInput.Icon
+                name="card-account-details-outline"
+                color="grey"
+              />
+            }
           />
           <Button
             onPress={() => {
@@ -914,7 +365,9 @@ const addPatientPage = ({ navigation }) => {
             onChangeText={(text) => setUserAddress(text)}
             mode="outlined"
             style={styles.input}
-            left={<TextInput.Icon name="map-marker-radius-outline" color="grey" />}
+            left={
+              <TextInput.Icon name="map-marker-radius-outline" color="grey" />
+            }
           />
           <TextInput
             label="Age"
@@ -924,17 +377,41 @@ const addPatientPage = ({ navigation }) => {
             style={styles.input}
             keyboardType="number-pad"
           />
-          <TextInput
-            label="Date of Visit (DD/MM/YYYY)"
-            value={visitDate}
-            onChangeText={(text) => setVisitDate(text)}
-            mode="outlined"
-            style={styles.input}
-            left={
-                  <TextInput.Icon name="calendar-month-outline" color="grey" />
-                }
+          <TouchableOpacity onPress={() => showMode("date")}>
+            <TextInput
+              label="Visit Date"
+              value={visitDate}
+              mode="outlined"
+              style={styles.input}
+              editable={false}
+              onChange={onChange}
+              left={
+                <TextInput.Icon name="calendar-month-outline" color="grey" />
+              }
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => showMode("time")}>
+            <TextInput
+              label="Visit Time"
+              value={visitTime}
+              onChange={onChange}
+              mode="outlined"
+              style={styles.input}
+              editable={false}
+            />
+          </TouchableOpacity>
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
               
-          />
+            />
+          )}
+
           <TextInput
             label="Gender"
             value={userGender}
@@ -948,9 +425,7 @@ const addPatientPage = ({ navigation }) => {
             onChangeText={(text) => setEmail(text)}
             mode="outlined"
             style={styles.input}
-            left={
-                  <TextInput.Icon name="email-open-outline" color="grey" />
-                }
+            left={<TextInput.Icon name="email-open-outline" color="grey" />}
           />
           <Text style={styles.category}>Medical Details</Text>
           <Text style={styles.subheading}>Patient History</Text>

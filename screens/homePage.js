@@ -38,7 +38,7 @@ const home = ({navigation}) => {
 
       <TouchableOpacity onPress={() => navigation.navigate("searchPage")}>
         <View style={styles.container2}>
-        <Text style={styles.subheading}>Search existing Patient</Text>
+        <Text style={styles.subheading}>Existing Patient</Text>
         </View>
       </TouchableOpacity>
 

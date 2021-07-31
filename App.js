@@ -7,6 +7,7 @@ import editDetails from "./screens/editDetails";
 import searchPage from "./screens/searchPage";
 import AddPatient from "./screens/addPatientPage";
 import patientDetails from "./screens/patientDetails";
+import newVisit from "./screens/newVisit";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 const Stack = createStackNavigator();
@@ -25,6 +26,7 @@ function App() {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="addPatientPage" component={AddPatient} />
       <Stack.Screen name="searchPage" component={searchPage} />
+      <Stack.Screen name="newVisit" component={newVisit} />
       <Stack.Screen name="patientDetails" component={patientDetails} />
       <Stack.Screen name="editDetails" component={editDetails} />
     </Stack.Navigator>
