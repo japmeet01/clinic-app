@@ -38,12 +38,12 @@ const addPatientPage = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [suggestion, setSuggestion] = useState("");
 
+
   //date time picker
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
   const [visitDate, setVisitDate] = useState("");
-  const [visitTime, setVisitTime] = useState("");
 
   const onChange = (event, selectedDate) => {
     setShow(false);
@@ -57,9 +57,8 @@ const addPatientPage = ({ navigation }) => {
         (tempDate.getMonth() + 1) +
         "-" +
         tempDate.getFullYear();
-      let ftime = tempDate.getHours() + ":" + tempDate.getMinutes();
       setVisitDate(fDate);
-      setVisitTime(ftime);
+
   } else {
       return;
   } 
@@ -209,7 +208,8 @@ const addPatientPage = ({ navigation }) => {
   }, []);
 
   function addPatient() {
-    if (Id == "" || Name == "" || visitDate==""||visitTime==""||userPhone==""||userAddress==""||userAge==""||userGender==""||email=="") {
+  
+    if (Id == "" || Name == "" || visitDate==""||userPhone==""||userAddress==""||userAge==""||userGender==""||email=="") {
       Alert.alert("Error", "General details cannot be empty.", [
         { text: "OK" },
       ]);
@@ -224,14 +224,13 @@ const addPatientPage = ({ navigation }) => {
             ]);
           } else {
             const patientInfo = firebase.database().ref("patientInfo");
-            patientInfo.child(Id).child(visitDate).child(visitTime).set({
+            patientInfo.child(Id).child(visitDate).set({
               patientName: Name,
               id: Id,
               phoneNumber: userPhone,
               address: userAddress,
               age: userAge,
               visitDate: visitDate,
-              visitTime:visitTime,
               Gender: userGender,
               Email: email,
               Suggestion: suggestion,
@@ -245,6 +244,8 @@ const addPatientPage = ({ navigation }) => {
               treatment3: valueTreatment3,
               dosage3: valueDosage3,
             });
+
+            patientInfo.child(Id).child("dateArray").push(visitDate);
 
             patientInfo.child(Id).update({
               patientName: Name,
@@ -390,16 +391,7 @@ const addPatientPage = ({ navigation }) => {
               }
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => showMode("time")}>
-            <TextInput
-              label="Visit Time"
-              value={visitTime}
-              onChange={onChange}
-              mode="outlined"
-              style={styles.input}
-              editable={false}
-            />
-          </TouchableOpacity>
+
           {show && (
             <DateTimePicker
               testID="dateTimePicker"

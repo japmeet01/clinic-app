@@ -23,17 +23,17 @@ import treatmentt from "../treatment"
 import historyy from "../history"
 import COO from "../CO"
 import diagnosiss from "../diagnosis"
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const addPatientPage = ({ navigation, route }) => {
   const win = Dimensions.get("window");
   const {
     patientgender,
     address,
-    agee,
+    age,
     patientId,
     name,
     phoneNumber,
-    visitDate,
     email,
     history,
     CO,
@@ -50,8 +50,8 @@ const addPatientPage = ({ navigation, route }) => {
   const [Id, setId] = useState(patientId);
   const [userPhone, setUserPhone] = useState(phoneNumber);
   const [userAddress, setUserAddress] = useState(address);
-  const [userAge, setUserAge] = useState(agee);
-  const [patientvisitDate, setVisitDate] = useState(visitDate);
+  const [userAge, setUserAge] = useState(age);
+//   const [patientvisitDate, setVisitDate] = useState(visitDate);
   const [userGender, setUserGender] = useState(patientgender);
   const [patientEmail, setEmail] = useState(email);
   const [History, setHistory] = useState(history);
@@ -64,6 +64,36 @@ const addPatientPage = ({ navigation, route }) => {
   const [Treatment3, setTreatment3] = useState(treatment3);
   const [Dosage3, setDosage3] = useState(dosage3);
   const [Suggestion, setSuggestion] = useState(doctorSuggestion);
+
+  //date time picker
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+  const [patientvisitDate, setVisitDate] = useState("");
+
+  const onChange = (event, selectedDate) => {
+    setShow(false);
+    const currentDate = selectedDate || date;
+    setDate(currentDate);
+    if(event.type == "set") {
+      let tempDate = new Date(currentDate);
+      let fDate =
+        tempDate.getDate() +
+        "-" +
+        (tempDate.getMonth() + 1) +
+        "-" +
+        tempDate.getFullYear();
+      setVisitDate(fDate);
+
+  } else {
+      return;
+  } 
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
 
   // patient history dropdown
   const [open, setOpen] = useState(false);
@@ -228,6 +258,8 @@ const addPatientPage = ({ navigation, route }) => {
       Suggestion:Suggestion,
     });
 
+    patientInfo.child(Id).child("dateArray").push(patientvisitDate);
+
     patientInfo.child(Id).child(patientvisitDate).update({
       patientName: Name,
       id: Id,
@@ -382,9 +414,9 @@ const addPatientPage = ({ navigation, route }) => {
           />
         </TouchableOpacity>
 
-        <Text style={styles.heading}>edit details</Text>
+        <Text style={styles.heading}>Repeat Visit</Text>
         <TouchableOpacity onPress={() => editData()}>
-          <Text style={styles.save}>save</Text>
+          <Text style={styles.save}>Add</Text>
         </TouchableOpacity>
       </View>
 
@@ -431,14 +463,31 @@ const addPatientPage = ({ navigation, route }) => {
             style={styles.input}
             keyboardType="number-pad"
           />
-          <TextInput
-            label="Date of Visit (DD/MM/YYYY)"
-            value={patientvisitDate}
-            onChangeText={(text) => setVisitDate(text)}
-            mode="outlined"
-            style={styles.input}
-            editable={false}
-          />
+          <TouchableOpacity onPress={() => showMode("date")}>
+            <TextInput
+              label="Visit Date"
+              value={patientvisitDate}
+              mode="outlined"
+              style={styles.input}
+              editable={false}
+              onChange={onChange}
+              left={
+                <TextInput.Icon name="calendar-month-outline" color="grey" />
+              }
+            />
+          </TouchableOpacity>
+
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+              
+            />
+          )}
           <TextInput
             label="Gender"
             value={userGender}

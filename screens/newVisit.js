@@ -47,13 +47,12 @@ const addPatientPage = ({ navigation, route }) => {
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
   const [visitDatee, setVisitDate] = useState("");
-  const [visitTimee, setVisitTime] = useState("");
 
   const onChange = (event, selectedDate) => {
     setShow(false);
     const currentDate = selectedDate || date;
     setDate(currentDate);
-    if(event.type == "set") {
+    if (event.type == "set") {
       let tempDate = new Date(currentDate);
       let fDate =
         tempDate.getDate() +
@@ -61,12 +60,11 @@ const addPatientPage = ({ navigation, route }) => {
         (tempDate.getMonth() + 1) +
         "-" +
         tempDate.getFullYear();
-      let ftime = tempDate.getHours() + ":" + tempDate.getMinutes();
+
       setVisitDate(fDate);
-      setVisitTime(ftime);
-    }else {
-        return;
-    } 
+    } else {
+      return;
+    }
   };
 
   const showMode = (currentMode) => {
@@ -217,7 +215,6 @@ const addPatientPage = ({ navigation, route }) => {
       Id == "" ||
       Name == "" ||
       visitDatee == "" ||
-      visitTimee == "" ||
       userPhone == "" ||
       userAddress == "" ||
       userAge == "" ||
@@ -238,14 +235,15 @@ const addPatientPage = ({ navigation, route }) => {
         Email: emaill,
       });
 
-      patientInfo.child(Id).child(visitDatee).child(visitTimee).set({
+      patientInfo.child(Id).child("dateArray").push(visitDatee);
+
+      patientInfo.child(Id).child(visitDatee).set({
         patientName: Name,
         id: Id,
         phoneNumber: userPhone,
         address: userAddress,
         age: userAge,
         visitDate: visitDatee,
-        visitTime: visitTimee,
         Gender: userGender,
         Email: emaill,
         Suggestion: suggestion,
@@ -364,15 +362,7 @@ const addPatientPage = ({ navigation, route }) => {
               }
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => showMode("time")}>
-            <TextInput
-              label="Visit Time"
-              value={visitTimee}
-              mode="outlined"
-              style={styles.input}
-              editable={false}
-            />
-          </TouchableOpacity>
+
           {show && (
             <DateTimePicker
               testID="dateTimePicker"
