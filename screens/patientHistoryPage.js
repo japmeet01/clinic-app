@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import { Dimensions } from "react-native";
+
 import {
   View,
   Text,
@@ -33,10 +34,10 @@ const patientHistory = ({ navigation, route }) => {
     phoneNumber,
     email,
   } = route.params;
-  
-//   console.log("..............");
-//   console.log(dateArray);
-// dateArray.reverse();
+
+  //   console.log("..............");
+  //   console.log(dateArray);
+  // dateArray.reverse();
   const [history, setHistory] = useState("");
   const [CO, setCO] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
@@ -106,18 +107,20 @@ const patientHistory = ({ navigation, route }) => {
   }
 
   ////////////////////////////////////////////////////////////////////////////
-  async function getDetails() {
-    if (visitDate !== "") {
+  async function getDetails(a) {
+    if (a !== "") {
+      // console.log("................");
       const dbRef = await firebase.database().ref("patientInfo");
       dbRef
         .child(patientId)
-        .child(visitDate)
+        .child(a)
         .get()
         .then(async (snapshot) => {
           if (snapshot.exists()) {
+            // console.log(a);
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("Suggestion")
               .get()
               .then(async (snapshot) => {
@@ -132,7 +135,7 @@ const patientHistory = ({ navigation, route }) => {
               });
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("visitDate")
               .get()
               .then(async (snapshot) => {
@@ -145,9 +148,9 @@ const patientHistory = ({ navigation, route }) => {
                   setVisitDate(VisitDate);
                 }
               });
-              dbRef
+            dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("age")
               .get()
               .then(async (snapshot) => {
@@ -163,7 +166,7 @@ const patientHistory = ({ navigation, route }) => {
 
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("history")
               .get()
               .then(async (snapshot) => {
@@ -178,7 +181,7 @@ const patientHistory = ({ navigation, route }) => {
               });
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("CO")
               .get()
               .then(async (snapshot) => {
@@ -193,7 +196,7 @@ const patientHistory = ({ navigation, route }) => {
               });
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("Diagnosis")
               .get()
               .then(async (snapshot) => {
@@ -208,7 +211,7 @@ const patientHistory = ({ navigation, route }) => {
               });
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
 
               .child("treatment1")
               .get()
@@ -224,7 +227,7 @@ const patientHistory = ({ navigation, route }) => {
               });
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("dosage1")
               .get()
               .then(async (snapshot) => {
@@ -239,7 +242,7 @@ const patientHistory = ({ navigation, route }) => {
               });
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("treatment2")
               .get()
               .then(async (snapshot) => {
@@ -254,7 +257,7 @@ const patientHistory = ({ navigation, route }) => {
               });
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("dosage2")
               .get()
               .then(async (snapshot) => {
@@ -269,7 +272,7 @@ const patientHistory = ({ navigation, route }) => {
               });
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("treatment3")
               .get()
               .then(async (snapshot) => {
@@ -284,7 +287,7 @@ const patientHistory = ({ navigation, route }) => {
               });
             dbRef
               .child(patientId)
-              .child(visitDate)
+              .child(a)
               .child("dosage3")
               .get()
               .then(async (snapshot) => {
@@ -343,7 +346,7 @@ const patientHistory = ({ navigation, route }) => {
       </View>
 
       <View style={styles.listCard}>
-        <TouchableOpacity onPress={() => showMode("date")}>
+        {/* <TouchableOpacity onPress={() => showMode("date")}>
           <TextInput
             label="Visit Date"
             value={visitDate}
@@ -373,17 +376,15 @@ const patientHistory = ({ navigation, route }) => {
           style={styles.button}
         >
           Search
-        </Button>
-        <Text style={styles.subheading}>
-          Recent Visits
-        </Text>
+        </Button> */}
+        <Text style={styles.subheading}>Recent Visits</Text>
         <ScrollView>
           <View>
             {dateArray.map((dateArray) => (
-              <TouchableOpacity>
-                <ListItem key={dateArray} bottomDivider>
-                  <ListItem.Content>
-                    <ListItem.Title>{dateArray}</ListItem.Title>
+              <TouchableOpacity onPress={() => getDetails(dateArray)}>
+                <ListItem  bottomDivider>
+                  <ListItem.Content >
+                    <ListItem.Title >{dateArray}</ListItem.Title>
                   </ListItem.Content>
                 </ListItem>
               </TouchableOpacity>
@@ -486,9 +487,10 @@ const styles = StyleSheet.create({
   },
   subheading: {
     color: "red",
-    fontSize:20,
-    marginLeft:5
-  }
+    marginLeft: 5,
+    fontFamily: "Salsa-Regular",
+    fontSize: 25,
+  },
 });
 
 export default patientHistory;
