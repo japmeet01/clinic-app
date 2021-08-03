@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect ,useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Dimensions } from "react-native";
 import {
   View,
@@ -12,58 +12,65 @@ import {
   TouchableOpacity,
   Modal,
   Alert,
+  LogBox,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Card, TextInput, Button } from "react-native-paper";
 import { Icon, SocialIcon, ListItem, Avatar } from "react-native-elements";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import DropDownPicker from "react-native-dropdown-picker";
 import * as firebase from "firebase";
-import dosagee from "../dosage"
-import treatmentt from "../treatment"
-import historyy from "../history"
-import COO from "../CO"
-import diagnosiss from "../diagnosis"
+import MultiSelect from "react-native-multiple-select";
+import DropDownPicker from "react-native-dropdown-picker";
+import dosagee from "../dosage";
+import treatmentt from "../treatment";
+import historyy from "../history";
+import COO from "../CO";
+import diagnosiss from "../diagnosis";
 
 const addPatientPage = ({ navigation, route }) => {
   const win = Dimensions.get("window");
-  const {
-    patientgender,
-    address,
-    agee,
-    patientId,
-    name,
-    phoneNumber,
-    visitDate,
-    email,
-    history,
-    CO,
-    diagnosis,
-    treatment1,
-    dosage1,
-    treatment2,
-    dosage2,
-    treatment3,
-    dosage3,
-    doctorSuggestion,
-  } = route.params;
+
+  const { patientgender, address, age, patientId, name, phoneNumber, email } =
+    route.params;
+
   const [Name, setName] = useState(name);
   const [Id, setId] = useState(patientId);
   const [userPhone, setUserPhone] = useState(phoneNumber);
   const [userAddress, setUserAddress] = useState(address);
-  const [userAge, setUserAge] = useState(agee);
-  const [patientvisitDate, setVisitDate] = useState(visitDate);
+  const [userAge, setUserAge] = useState(age);
   const [userGender, setUserGender] = useState(patientgender);
-  const [patientEmail, setEmail] = useState(email);
-  const [History, setHistory] = useState(history);
-  const [co, setCO] = useState(CO);
-  const [Diagnosis, setDiagnosis] = useState(diagnosis);
-  const [Treatment1, setTreatment1] = useState(treatment1);
-  const [Dosage1, setDosage1] = useState(dosage1);
-  const [Treatment2, setTreatment2] = useState(treatment2);
-  const [Dosage2, setDosage2] = useState(dosage2);
-  const [Treatment3, setTreatment3] = useState(treatment3);
-  const [Dosage3, setDosage3] = useState(dosage3);
-  const [Suggestion, setSuggestion] = useState(doctorSuggestion);
+  const [emaill, setEmail] = useState(email);
+  const [suggestion, setSuggestion] = useState("");
+
+  //date time picker
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+  const [visitDatee, setVisitDate] = useState("");
+
+  const onChange = (event, selectedDate) => {
+    setShow(false);
+    const currentDate = selectedDate || date;
+    setDate(currentDate);
+    if (event.type == "set") {
+      let tempDate = new Date(currentDate);
+      let fDate =
+        tempDate.getDate() +
+        "-" +
+        (tempDate.getMonth() + 1) +
+        "-" +
+        tempDate.getFullYear();
+
+      setVisitDate(fDate);
+    } else {
+      return;
+    }
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
 
   // patient history dropdown
   const [open, setOpen] = useState(false);
@@ -203,162 +210,61 @@ const addPatientPage = ({ navigation, route }) => {
     setOpenDosage2(false);
   }, []);
 
-  function editData() {
-    const patientInfo = firebase.database().ref("patientInfo");
-    patientInfo.child(Id).update({
-      patientName: Name,
-      id: Id,
-      phoneNumber: userPhone,
-      address: userAddress,
-      age: userAge,
-      Gender: userGender,
-      Email: patientEmail,
-      // history:History,
-      // CO: co,
-      // Diagnosis: Diagnosis,
-      // treatment1: Treatment1,
-      // dosage1: Dosage1,
-      // treatment2: Treatment2,
-      // dosage2: Dosage2,
-      // treatment3: Treatment3,
-      // dosage3: Dosage3,
-    });
-
-    patientInfo.child(Id).child(patientvisitDate).update({
-      Suggestion:Suggestion,
-    });
-
-    patientInfo.child(Id).child(patientvisitDate).update({
-      patientName: Name,
-      id: Id,
-      phoneNumber: userPhone,
-      address: userAddress,
-      age: userAge,
-      visitDate: patientvisitDate,
-      Gender: userGender,
-      Email: patientEmail,
-    });
-
-    if (value !== []) {
+  function addPatient() {
+    if (
+      Id == "" ||
+      Name == "" ||
+      visitDatee == "" ||
+      userPhone == "" ||
+      userAddress == "" ||
+      userAge == "" ||
+      userGender == "" ||
+      emaill == ""
+    ) {
+      Alert.alert("Error", "General details cannot be empty.", [
+        { text: "OK" },
+      ]);
+    } else {
       const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
+      patientInfo.child(Id).update({
+        patientName: Name,
+        phoneNumber: userPhone,
+        address: userAddress,
+        age: userAge,
+        Gender: userGender,
+        Email: emaill,
+      });
+
+      patientInfo.child(Id).child("dateArray").push(visitDatee);
+
+      patientInfo.child(Id).child(visitDatee).set({
+        patientName: Name,
+        id: Id,
+        phoneNumber: userPhone,
+        address: userAddress,
+        age: userAge,
+        visitDate: visitDatee,
+        Gender: userGender,
+        Email: emaill,
+        Suggestion: suggestion,
         history: value,
-      });
-    }
-      if(value.length==0){
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
-        history: History,
-      });
-    }
-
-    if (valueCO !== []) {
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
         CO: valueCO,
-      });
-    }
-    if(valueCO.length==0){
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
-        CO: co,
-      });
-    }
-
-    if (valueDiagnosis !== []) {
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
         Diagnosis: valueDiagnosis,
-      });
-    }
-    if(valueDiagnosis.length==0){
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
-        Diagnosis: Diagnosis,
-      });
-    }
-    
-    if (valueTreatment1 !== []) {
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
         treatment1: valueTreatment1,
-      });
-    }
-    if(valueTreatment1.length==0){
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
-        treatment1: Treatment1,
-      });
-    }
-
-    if (valueDosage1 !== []) {
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
         dosage1: valueDosage1,
-      });
-    }
-    if(valueDosage1.length==0){
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
-        dosage1: Dosage1,
-      });
-    }
-
-    if (valueTreatment2 !== []) {
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
         treatment2: valueTreatment2,
-      });
-    }
-    if(valueTreatment2.length==0){
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
-        treatment2: Treatment2,
-      });
-    }
-
-    if (valueDosage2 !== []) {
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
         dosage2: valueDosage2,
-      });
-    }
-    if(valueDosage2.length==0){
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
-        dosage2: Dosage2,
-      });
-    }
-
-    if (valueTreatment3 !== []) {
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
         treatment3: valueTreatment3,
-      });
-    }
-    if(valueTreatment3.length==0){
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
-        treatment3: Treatment3,
-      });
-    }
-
-    if (valueDosage3 !== []) {
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
         dosage3: valueDosage3,
       });
+      Alert.alert("Success", "Successfully added the visit.", [{ text: "OK" }]);
+      navigation.navigate("Home");
     }
-    if(valueDosage3.length==0){
-      const patientInfo = firebase.database().ref("patientInfo");
-      patientInfo.child(Id).child(patientvisitDate).update({
-        dosage3: Dosage3,
-      });
-    }
-
-    Alert.alert("Success", "Details Updated Succesfully", [{ text: "OK" }]);
-    navigation.navigate("Home");
   }
+
+  useEffect(() => {
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -372,7 +278,7 @@ const addPatientPage = ({ navigation, route }) => {
         source={require("../assets/images/topbackground.png")}
       />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate("patientDetails")}>
+        <TouchableOpacity onPress={() => navigation.navigate("searchPage")}>
           <Icon
             name="arrow-left"
             type="font-awesome-5"
@@ -381,32 +287,42 @@ const addPatientPage = ({ navigation, route }) => {
             size={30}
           />
         </TouchableOpacity>
-
-        <Text style={styles.heading}>edit details</Text>
-        <TouchableOpacity onPress={() => editData()}>
-          <Text style={styles.save}>save</Text>
+        <Text style={styles.heading}>New Visit</Text>
+        <TouchableOpacity
+          onPress={() => addPatient()}
+          // onPressIn={() => navigation.navigate("Home")}
+        >
+          <Text style={styles.save}>Add</Text>
         </TouchableOpacity>
       </View>
 
       <Card style={styles.card}>
-        <KeyboardAwareScrollView enableOnAndroid={true} extraHeight={200}>
-          <Text style={styles.detailsText}>Personal Details</Text>
+        <KeyboardAwareScrollView enableOnAndroid={true}>
+          <Text style={styles.category}>General Details</Text>
           <TextInput
             label="Name"
             value={Name}
             onChangeText={(text) => setName(text)}
             mode="outlined"
+            editable={false}
             style={styles.input}
+            left={<TextInput.Icon name="shield-account-outline" color="grey" />}
           />
           <TextInput
             label="Patient Id"
             keyboardType="number-pad"
             value={Id}
-            onChangeText={(text) => setId(text)}
+            editable={false}
             mode="outlined"
             style={styles.input}
-            editable={false}
+            left={
+              <TextInput.Icon
+                name="card-account-details-outline"
+                color="grey"
+              />
+            }
           />
+
           <TextInput
             label="Phone Number"
             value={userPhone}
@@ -414,6 +330,7 @@ const addPatientPage = ({ navigation, route }) => {
             mode="outlined"
             style={styles.input}
             keyboardType="number-pad"
+            left={<TextInput.Icon name="cellphone-basic" color="grey" />}
           />
           <TextInput
             label="Address"
@@ -421,7 +338,9 @@ const addPatientPage = ({ navigation, route }) => {
             onChangeText={(text) => setUserAddress(text)}
             mode="outlined"
             style={styles.input}
-            multiline={true}
+            left={
+              <TextInput.Icon name="map-marker-radius-outline" color="grey" />
+            }
           />
           <TextInput
             label="Age"
@@ -431,14 +350,30 @@ const addPatientPage = ({ navigation, route }) => {
             style={styles.input}
             keyboardType="number-pad"
           />
-          <TextInput
-            label="Date of Visit (DD/MM/YYYY)"
-            value={patientvisitDate}
-            onChangeText={(text) => setVisitDate(text)}
-            mode="outlined"
-            style={styles.input}
-            editable={false}
-          />
+          <TouchableOpacity onPress={() => showMode("date")}>
+            <TextInput
+              label="Visit Date"
+              value={visitDatee}
+              mode="outlined"
+              style={styles.input}
+              editable={false}
+              left={
+                <TextInput.Icon name="calendar-month-outline" color="grey" />
+              }
+            />
+          </TouchableOpacity>
+
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+            />
+          )}
+
           <TextInput
             label="Gender"
             value={userGender}
@@ -448,23 +383,14 @@ const addPatientPage = ({ navigation, route }) => {
           />
           <TextInput
             label="Email"
-            value={patientEmail}
+            value={emaill}
             onChangeText={(text) => setEmail(text)}
             mode="outlined"
             style={styles.input}
+            left={<TextInput.Icon name="email-open-outline" color="grey" />}
           />
-          <Text style={styles.detailsText}>Medical Details</Text>
+          <Text style={styles.category}>Medical Details</Text>
           <Text style={styles.subheading}>Patient History</Text>
-          <TextInput
-          placeholder="Patient History"
-            value={History}
-            onChangeText={(text) => setHistory(text)}
-            mode="outlined"
-            style={styles.input1}
-            multiline={true}
-            editable={false}
-          />
-          
           <DropDownPicker
             multiple={true}
             open={open}
@@ -474,7 +400,7 @@ const addPatientPage = ({ navigation, route }) => {
             setOpen={setOpen}
             setValue={setValue}
             setItems={setItems}
-            placeholder="Edit Patient History"
+            placeholder="Choose"
             placeholderStyle={{
               color: "#878787",
             }}
@@ -492,16 +418,8 @@ const addPatientPage = ({ navigation, route }) => {
             style={styles.dropdown}
             zIndex={3000}
           />
-           <Text style={styles.subheading}>C/O</Text>
-          <TextInput
-          placeholder="C/O"
-            value={co}
-            onChangeText={(text) => setCO(text)}
-            mode="outlined"
-            style={styles.input1}
-            multiline={true}
-            editable={false}
-          />
+
+          <Text style={styles.subheading}>C/O</Text>
           <DropDownPicker
             multiple={true}
             open={openCO}
@@ -511,7 +429,7 @@ const addPatientPage = ({ navigation, route }) => {
             setOpen={setOpenCO}
             setValue={setValueCO}
             setItems={setItemsCO}
-            placeholder="Edit C/O"
+            placeholder="Choose"
             placeholderStyle={{
               color: "#878787",
             }}
@@ -530,16 +448,6 @@ const addPatientPage = ({ navigation, route }) => {
             zIndex={2000}
           />
           <Text style={styles.subheading}>Diagnosis</Text>
-          <TextInput
-          placeholder="Diagnosis"
-            value={Diagnosis}
-            onChangeText={(text) => setDiagnosis(text)}
-            mode="outlined"
-            style={styles.input1}
-            multiline={true}
-            editable={false}
-          />
-          
           <DropDownPicker
             multiple={true}
             open={openDiagnosis}
@@ -549,7 +457,7 @@ const addPatientPage = ({ navigation, route }) => {
             setOpen={setOpenDiagnosis}
             setValue={setValueDiagnosis}
             setItems={setItemsDiagnosis}
-            placeholder="Edit Diagnosis"
+            placeholder="Choose"
             placeholderStyle={{
               color: "#878787",
             }}
@@ -568,16 +476,6 @@ const addPatientPage = ({ navigation, route }) => {
             zIndex={1000}
           />
           <Text style={styles.subheading}>Treatment-1</Text>
-          <TextInput
-          placeholder="Treatment-1"
-            value={Treatment1}
-            onChangeText={(text) => setTreatment1(text)}
-            mode="outlined"
-            style={styles.input1}
-            multiline={true}
-            editable={false}
-          />
-          
           <DropDownPicker
             multiple={true}
             open={openTreatment1}
@@ -587,7 +485,7 @@ const addPatientPage = ({ navigation, route }) => {
             setOpen={setOpenTreatment1}
             setValue={setValueTreatment1}
             setItems={setItemsTreatment1}
-            placeholder="Edit Treatment-1"
+            placeholder="Choose"
             placeholderStyle={{
               color: "#878787",
             }}
@@ -605,17 +503,7 @@ const addPatientPage = ({ navigation, route }) => {
             style={styles.dropdown}
             zIndex={900}
           />
-          <Text style={styles.subheading}>Dosage-1</Text>
-          <TextInput
-          placeholder="Dosage-1"
-            value={Dosage1}
-            onChangeText={(text) => setDosage1(text)}
-            mode="outlined"
-            style={styles.input1}
-            multiline={true}
-            editable={false}
-          />
-          
+          <Text style={styles.subheading2}>Dosage-1</Text>
           <DropDownPicker
             multiple={true}
             open={openDosage1}
@@ -625,7 +513,7 @@ const addPatientPage = ({ navigation, route }) => {
             setOpen={setOpenDosage1}
             setValue={setValueDosage1}
             setItems={setItemsDosage1}
-            placeholder="Edit Dosage-1"
+            placeholder="Choose"
             placeholderStyle={{
               color: "#878787",
             }}
@@ -644,16 +532,6 @@ const addPatientPage = ({ navigation, route }) => {
             zIndex={800}
           />
           <Text style={styles.subheading}>Treatment-2</Text>
-          <TextInput
-          placeholder="Treatment-2"
-            value={Treatment2}
-            onChangeText={(text) => setTreatment2(text)}
-            mode="outlined"
-            style={styles.input1}
-            multiline={true}
-            editable={false}
-          />
-           
           <DropDownPicker
             multiple={true}
             open={openTreatment2}
@@ -663,7 +541,7 @@ const addPatientPage = ({ navigation, route }) => {
             setOpen={setOpenTreatment2}
             setValue={setValueTreatment2}
             setItems={setItemsTreatment2}
-            placeholder="Edit Treatment-2"
+            placeholder="Choose"
             placeholderStyle={{
               color: "#878787",
             }}
@@ -681,17 +559,7 @@ const addPatientPage = ({ navigation, route }) => {
             style={styles.dropdown}
             zIndex={700}
           />
-           <Text style={styles.subheading}>Dosage-2</Text>
-          <TextInput
-          placeholder="Dosage-2"
-            value={Dosage2}
-            onChangeText={(text) => setDosage2(text)}
-            mode="outlined"
-            style={styles.input1}
-            multiline={true}
-            editable={false}
-          />
-          
+          <Text style={styles.subheading2}>Dosage-2</Text>
           <DropDownPicker
             multiple={true}
             open={openDosage2}
@@ -701,7 +569,7 @@ const addPatientPage = ({ navigation, route }) => {
             setOpen={setOpenDosage2}
             setValue={setValueDosage2}
             setItems={setItemsDosage2}
-            placeholder="Edit Dosage-2"
+            placeholder="Choose"
             placeholderStyle={{
               color: "#878787",
             }}
@@ -720,16 +588,6 @@ const addPatientPage = ({ navigation, route }) => {
             zIndex={600}
           />
           <Text style={styles.subheading}>Treatment-3</Text>
-          <TextInput
-          placeholder="Treatment-3"
-            value={Treatment3}
-            onChangeText={(text) => setTreatment3(text)}
-            mode="outlined"
-            style={styles.input1}
-            multiline={true}
-            editable={false}
-          />
-
           <DropDownPicker
             multiple={true}
             open={openTreatment3}
@@ -739,7 +597,7 @@ const addPatientPage = ({ navigation, route }) => {
             setOpen={setOpenTreatment3}
             setValue={setValueTreatment3}
             setItems={setItemsTreatment3}
-            placeholder="Edit Treatment-3"
+            placeholder="Choose"
             placeholderStyle={{
               color: "#878787",
             }}
@@ -757,17 +615,7 @@ const addPatientPage = ({ navigation, route }) => {
             style={styles.dropdown}
             zIndex={500}
           />
-          <Text style={styles.subheading}>Dosage-3</Text>
-          <TextInput
-            placeholder="Dosage-3"
-            value={Dosage3}
-            onChangeText={(text) => setDosage3(text)}
-            mode="outlined"
-            style={styles.input1}
-            multiline={true}
-            editable={false}
-          />
-           
+          <Text style={styles.subheading2}>Dosage-3</Text>
           <DropDownPicker
             multiple={true}
             open={openDosage3}
@@ -777,7 +625,7 @@ const addPatientPage = ({ navigation, route }) => {
             setOpen={setOpenDosage3}
             setValue={setValueDosage3}
             setItems={setItemsDosage3}
-            placeholder="Edit Dosage-3"
+            placeholder="Choose"
             placeholderStyle={{
               color: "#878787",
             }}
@@ -797,7 +645,7 @@ const addPatientPage = ({ navigation, route }) => {
           />
           <TextInput
             label="Suggestion"
-            value={Suggestion}
+            value={suggestion}
             onChangeText={(text) => setSuggestion(text)}
             mode="outlined"
             style={styles.input}
@@ -841,38 +689,44 @@ const styles = StyleSheet.create({
     width: "90%",
     borderRadius: 20,
     position: "absolute",
-    top: 160,
+    top: 170,
     padding: 15,
-    paddingBottom: 25,
-    height: 460,
+    height: 500,
   },
   input: {
-    marginTop: 20,
-  },
-  input1: {
-    marginTop: 4,
-  },
-  detailsText: {
-    fontFamily: "Salsa-Regular",
-    fontSize: 25,
-    lineHeight: 31,
-    color: "red",
-    marginTop: "7%",
-    marginBottom: "2%",
-  },
-  subheading: {
-    color: "red",
-    fontSize: 17,
-    marginTop:15,
+    margin: 15,
+    marginTop: 10,
+    backgroundColor: "#f0f0f0",
   },
   dropdown: {
-    marginTop: 15,
+    margin: 15,
+    marginTop: 10,
+    width: 265,
     backgroundColor: "#f0f0f0",
     height: 60,
     borderColor: "#878787",
-    marginBottom: 15,
   },
-
+  button: {
+    width: 130,
+    marginLeft: 80,
+    // padding: 5,
+    // marginTop: 20,
+    // marginBottom: 30,
+  },
+  subheading: {
+    marginLeft: 20,
+    color: "red",
+    fontSize: 17,
+  },
+  subheading2: {
+    marginLeft: 20,
+    fontSize: 17,
+  },
+  category: {
+    marginLeft: 20,
+    fontSize: 25,
+    color: "#280080",
+  },
 });
 
 export default addPatientPage;

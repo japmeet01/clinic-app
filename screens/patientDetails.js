@@ -22,6 +22,7 @@ const patientDetails = ({ navigation, route }) => {
   const {
     patientgender,
     address,
+    agee,
     age,
     patientId,
     name,
@@ -67,7 +68,7 @@ const patientDetails = ({ navigation, route }) => {
             navigation.navigate("editDetails", {
               patientgender,
               address,
-              age,
+              agee,
               patientId,
               name,
               phoneNumber,
@@ -134,7 +135,7 @@ const patientDetails = ({ navigation, route }) => {
             <View>
               <TextInput
                 label="Age"
-                value={age}
+                value={agee}
                 editable={false}
                 mode="outlined"
                 style={styles.inputAge}
@@ -301,6 +302,34 @@ const patientDetails = ({ navigation, route }) => {
             multiline={true}
             style={styles.inputname}
           />
+          <Button
+            onPress={() => {
+              navigation.navigate("newVisit1", {
+              patientgender,
+              address,
+              age,
+              patientId,
+              name,
+              phoneNumber,
+              email,
+              history,
+              CO,
+              diagnosis,
+              treatment1,
+              dosage1,
+              treatment2,
+              dosage2,
+              treatment3,
+              dosage3,
+              doctorSuggestion
+            })
+            }}
+            icon="account-plus-outline"
+            mode="contained"
+            style={styles.button}
+          >
+            Repeat Visit
+          </Button>
 
         </ScrollView>
       </Card>
@@ -380,6 +409,16 @@ const styles = StyleSheet.create({
   treatment:{
     marginLeft:5,
     color: "red"
+  },
+  button: {
+    width: 150,
+    // marginLeft: 86,
+    padding: 5,
+    marginTop: 20,
+    marginBottom: 30,
+    alignItems: "center",
+    marginLeft: "auto",
+    marginRight: "auto",
   },
 });
 

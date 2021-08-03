@@ -12,251 +12,174 @@ import {
   TouchableOpacity,
   Modal,
   Alert,
+  LogBox,
 } from "react-native";
 import { Card, TextInput, Button } from "react-native-paper";
 import { Icon, SocialIcon, ListItem, Avatar } from "react-native-elements";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as firebase from "firebase";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const searchPatient = ({ navigation }) => {
   const win = Dimensions.get("window");
   const [Id, setId] = useState("");
+  const [Id2, setId2] = useState("");
   const [patientgender, setpatientgender] = useState("");
   const [address, setaddress] = useState("");
   const [age, setage] = useState("");
   const [patientId, setpatientId] = useState("");
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [visitDate, setVisitDate] = useState("");
   const [email, setEmail] = useState("");
-  const [history, setHistory] = useState("");
-  const [CO, setCO] = useState("");
-  const [diagnosis, setDiagnosis] = useState("");
-  const [treatment1, setTreatment1] = useState("");
-  const [dosage1, setDosage1] = useState("");
-  const [treatment2, setTreatment2] = useState("");
-  const [dosage2, setDosage2] = useState("");
-  const [treatment3, setTreatment3] = useState("");
-  const [dosage3, setDosage3] = useState("");
-  const [doctorSuggestion, setDoctorSuggestion] = useState("");
+  const [dateArray, setdateArray] = useState([]);
   const [modal, setModal] = useState(false);
+  const [modal2, setModal2] = useState(false);
+  
+
+
+  /////////////////////////////////////////////////////////////////////////////////
+  var empty = [];
+  function snapshotToArray(snapshot) {
+    snapshot.forEach(function (childSnapshot) {
+      var item = childSnapshot.val();
+
+      item.key = childSnapshot.key;
+
+      dateArray.push(item);
+    });
+    dateArray.reverse();
+    return dateArray;
+  }
+
 
   async function getData() {
-    if(Id!==""){
-    const dbRef = await firebase.database().ref("patientInfo");
-    dbRef
-      .child(Id)
-      .get()
-      .then(async (snapshot) => {
-        if (snapshot.exists()) {
-          await dbRef
-            .child(Id)
-            .child("Gender")
-            .get()
-            .then((snapshot) => {
-              if (snapshot.exists()) {
-              const patientGender = snapshot.val();
-              const patientgender = patientGender.toString();
-              setpatientgender(patientgender);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("address")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const address = await snapshot.val();
-              const Address = address.toString();
-              setaddress(Address);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("age")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const age = await snapshot.val();
-              const patientAge = age.toString();
-              setage(patientAge);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("id")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const patientId = await snapshot.val();
-              const PatientId = patientId.toString();
-              setpatientId(PatientId);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("patientName")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const patientName = await snapshot.val();
-              const PatientName = patientName.toString();
-              setName(PatientName);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("phoneNumber")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const phoneNumber = await snapshot.val();
-              const PhoneNumber = phoneNumber.toString();
-              setPhoneNumber(PhoneNumber);
-              }
-            });
+    if (Id2 !== "") {
+      const dbRef = await firebase.database().ref("patientInfo");
+
+      dbRef
+        .child(Id2)
+        .get()
+        .then(async (snapshot) => {
+          if (snapshot.exists()) {
             dbRef
-            .child(Id)
-            .child("Suggestion")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const sugg = await snapshot.val();
-              const Sugg = sugg.toString();
-              setDoctorSuggestion(Sugg);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("visitDate")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const visitDate = await snapshot.val();
-              const VisitDate = visitDate.toString();
-              setVisitDate(VisitDate);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("Email")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const patientEmail = await snapshot.val();
-              const patientemail = patientEmail.toString();
-              setEmail(patientemail);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("history")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const patientHistory = await snapshot.val();
-              const patienthistory = patientHistory.toString();
-              setHistory(patienthistory);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("CO")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const co = await snapshot.val();
-              const patientCO = co.toString();
-              setCO(patientCO);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("Diagnosis")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const diag = await snapshot.val();
-              const patientDiagnosis = diag.toString();
-              setDiagnosis(patientDiagnosis);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("treatment1")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const treat1 = await snapshot.val();
-              const Treat1 = treat1.toString();
-              setTreatment1(Treat1);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("dosage1")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const dose1 = await snapshot.val();
-              const Dose1 = dose1.toString();
-              setDosage1(Dose1);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("treatment2")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const treat2 = await snapshot.val();
-              const Treat2 = treat2.toString();
-              setTreatment2(Treat2);
-              }
-            });
-          dbRef
-            .child(Id)
-            .child("dosage2")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const dose2 = await snapshot.val();
-              const Dose2 = dose2.toString();
-              setDosage2(Dose2);
-              }
-            });
+              .child(Id2)
+              .child("dateArray")
+              .on("value", function (snapshot) {
+                snapshotToArray(snapshot);
+              });
+
             dbRef
-            .child(Id)
-            .child("treatment3")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const treat3 = await snapshot.val();
-              const Treat3 = treat3.toString();
-              setTreatment3(Treat3);
-              }
-            });
+              .child(Id2)
+              .child("id")
+              .get()
+              .then(async (snapshot) => {
+                if (snapshot.exists()) {
+                  const patientId = await snapshot.val();
+                  const PatientId = patientId.toString();
+                  setpatientId(PatientId);
+                } else {
+                  const PatientId = "";
+                  setpatientId(PatientId);
+                }
+              });
+            await dbRef
+              .child(Id2)
+              .child("Gender")
+              .get()
+              .then((snapshot) => {
+                if (snapshot.exists()) {
+                  const patientGender = snapshot.val();
+                  const patientgender = patientGender.toString();
+                  setpatientgender(patientgender);
+                }
+              });
             dbRef
-            .child(Id)
-            .child("dosage3")
-            .get()
-            .then(async (snapshot) => {
-              if (snapshot.exists()) {
-              const dose3 = await snapshot.val();
-              const Dose3 = dose3.toString();
-              setDosage3(Dose3);
-              }
-            });
-          setModal(true);
-        } else {
-          Alert.alert("Alert", "No data exists.", [{ text: "OK" }]);
-        }
-      });
-    }
-    else{
-      Alert.alert("Alert", "Id cannot be blank.", [{ text: "OK" }]);
+              .child(Id2)
+              .child("address")
+              .get()
+              .then(async (snapshot) => {
+                if (snapshot.exists()) {
+                  const address = await snapshot.val();
+                  const Address = address.toString();
+                  setaddress(Address);
+                }
+              });
+
+            dbRef
+              .child(Id2)
+              .child("age")
+              .get()
+              .then(async (snapshot) => {
+                if (snapshot.exists()) {
+                  const age = await snapshot.val();
+                  const patientAge = age.toString();
+                  setage(patientAge);
+                }
+              });
+            dbRef
+              .child(Id2)
+              .child("id")
+              .get()
+              .then(async (snapshot) => {
+                if (snapshot.exists()) {
+                  const patientId = await snapshot.val();
+                  const PatientId = patientId.toString();
+                  setpatientId(PatientId);
+                }
+              });
+            dbRef
+              .child(Id2)
+              .child("patientName")
+              .get()
+              .then(async (snapshot) => {
+                if (snapshot.exists()) {
+                  const patientName = await snapshot.val();
+                  const PatientName = patientName.toString();
+                  setName(PatientName);
+                }
+              });
+            dbRef
+              .child(Id2)
+              .child("phoneNumber")
+              .get()
+              .then(async (snapshot) => {
+                if (snapshot.exists()) {
+                  const phoneNumber = await snapshot.val();
+                  const PhoneNumber = phoneNumber.toString();
+                  setPhoneNumber(PhoneNumber);
+                }
+              });
+            dbRef
+              .child(Id2)
+              .child("Email")
+              .get()
+              .then(async (snapshot) => {
+                if (snapshot.exists()) {
+                  const patientEmail = await snapshot.val();
+                  const patientemail = patientEmail.toString();
+                  setEmail(patientemail);
+                }
+              });
+
+            setModal2(true);
+          } else {
+            Alert.alert(
+              "Alert",
+              "No data exists. Please check the inputs carefully",
+              [{ text: "OK" }]
+            );
+          }
+        });
+    } else {
+      Alert.alert("Alert", "Inputs cannot be blank.", [{ text: "OK" }]);
     }
   }
 
+  useEffect(() => {
+    LogBox.ignoreLogs(["Reference.child failed"]);
+  }, []);
+  /////////////////////////////////////////////////////////////////////////////////
+  
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -278,67 +201,64 @@ const searchPatient = ({ navigation }) => {
             size={30}
           />
         </TouchableOpacity>
-        <Text style={styles.heading}>Search Patient</Text>
+        <Text style={styles.heading}>Existing Patient</Text>
       </View>
       <Card style={styles.card}>
-        <TextInput
-          label="Search using Patient Id"
-          keyboardType="number-pad"
-          value={Id}
-          onChangeText={(text) => setId(text)}
-          mode="outlined"
-          style={styles.input}
-        />
-        <Button
-          onPress={() => {
-            getData();
-          }}
-          icon="account-search"
-          mode="contained"
-          style={styles.button}
-        >
-          Search
-        </Button>
-      </Card>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modal}
-        onRequestClose={() => {
-          setModal(false);
-        }}
-      >
-        <View style={styles.modal}>
+        <KeyboardAwareScrollView enableOnAndroid={true} extraHeight={200}>
+          <Text style={styles.detailsText}>Patient History</Text>
+          <TextInput
+            label="Enter Patient Id"
+            keyboardType="number-pad"
+            value={Id2}
+            onChangeText={(text) => setId2(text)}
+            mode="outlined"
+            style={styles.input}
+          />
+
           <Button
-            mode="contained"
             onPress={() => {
-              setModal(false);
-              navigation.navigate("patientDetails", {
-                patientgender,
-                address,
-                age,
-                patientId,
-                name,
-                phoneNumber,
-                visitDate,
-                email,
-                history,
-                CO,
-                diagnosis,
-                treatment1,
-                dosage1,
-                treatment2,
-                dosage2,
-                treatment3,
-                dosage3,
-                doctorSuggestion
-              });
+              getData();
+            }}
+            icon="account-search"
+            mode="contained"
+            style={styles.button}
+          >
+            Search
+          </Button>
+          <Modal
+            animationType="show"
+            transparent={true}
+            visible={modal2}
+            onRequestClose={() => {
+              setModal2(false);
+              setdateArray(empty);
             }}
           >
-            View Details
-          </Button>
-        </View>
-      </Modal>
+            <View style={styles.modal2}>
+              <Button
+                mode="contained"
+                onPress={() => {
+                  setModal2(false);
+                  setdateArray(empty);
+                  navigation.navigate("patientHistory", {
+                    patientId,
+                    dateArray,
+                    patientgender,
+                    address,
+                    age,
+                    patientId,
+                    name,
+                    phoneNumber,
+                    email,
+                  });
+                }}
+              >
+                View Details
+              </Button>
+            </View>
+          </Modal>
+        </KeyboardAwareScrollView>
+      </Card>
     </SafeAreaView>
   );
 };
@@ -362,6 +282,15 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     marginRight: 30,
   },
+  detailsText: {
+    fontFamily: "Salsa-Regular",
+    fontSize: 25,
+    lineHeight: 31,
+    color: "red",
+    marginLeft:15,
+    marginTop: "7%",
+    marginBottom: "3%",
+  },
   input: {
     margin: 15,
     elevation: 5,
@@ -369,22 +298,27 @@ const styles = StyleSheet.create({
   card: {
     width: "90%",
     borderRadius: 20,
+    height: 350,
     position: "absolute",
-    top: 200,
+    top: 170,
     padding: 15,
   },
   button: {
     width: 120,
-    marginLeft: 86,
+    // marginLeft: 86,
     padding: 5,
     marginTop: 20,
     marginBottom: 30,
+    alignItems: "center",
+    marginLeft: "auto",
+    marginRight: "auto",
   },
-  modal: {
+
+  modal2: {
     position: "absolute",
-    bottom: "35%",
-    left: 96,
-    width: 170,
+    bottom: "38%",
+    // left: 96,
+    width: "100%",
     alignItems: "center",
   },
 });
