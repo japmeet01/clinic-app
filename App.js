@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useFonts } from "expo-font";
 import AppLoading from "expo-app-loading";
 import * as firebase from "firebase";
+import Login from "./screens/login";
 import Home from "./screens/homePage";
 import editDetails from "./screens/editDetails";
 import searchPage from "./screens/searchPage";
@@ -25,6 +26,7 @@ function App() {
         headerShown: false,
       }}
     >
+      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="addPatientPage" component={AddPatient} />
       <Stack.Screen name="searchPage" component={searchPage} />

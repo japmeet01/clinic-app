@@ -844,7 +844,7 @@ const styles = StyleSheet.create({
     top: 160,
     padding: 15,
     paddingBottom: 25,
-    height: 460,
+    height: "70%",
   },
   input: {
     marginTop: 20,

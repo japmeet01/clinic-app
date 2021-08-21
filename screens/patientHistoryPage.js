@@ -382,7 +382,7 @@ const patientHistory = ({ navigation, route }) => {
           <View>
             {dateArray.map((dateArray) => (
               <TouchableOpacity onPress={() => getDetails(dateArray)}>
-                <ListItem  bottomDivider>
+                <ListItem  bottomDivider key={Math.random()}>
                   <ListItem.Content >
                     <ListItem.Title >{dateArray}</ListItem.Title>
                   </ListItem.Content>
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   listCard: {
     marginTop: "50%",
     padding: 20,
-    height: 470,
+    height: "62%",
     width: "90%",
     backgroundColor: "white",
     borderRadius: 30,
