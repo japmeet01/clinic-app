@@ -204,7 +204,7 @@ const searchPatient = ({ navigation }) => {
         <Text style={styles.heading}>Existing Patient</Text>
       </View>
       <Card style={styles.card}>
-        <KeyboardAwareScrollView enableOnAndroid={true} extraHeight={200}>
+       
           <Text style={styles.detailsText}>Patient History</Text>
           <TextInput
             label="Enter Patient Id"
@@ -257,7 +257,6 @@ const searchPatient = ({ navigation }) => {
               </Button>
             </View>
           </Modal>
-        </KeyboardAwareScrollView>
       </Card>
     </SafeAreaView>
   );
@@ -316,7 +315,7 @@ const styles = StyleSheet.create({
 
   modal2: {
     position: "absolute",
-    bottom: "38%",
+    bottom: "10%",
     // left: 96,
     width: "100%",
     alignItems: "center",

@@ -1,6 +1,11 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import { Dimensions } from "react-native";
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
+import * as IntentLauncher from "expo-intent-launcher";
+
+
 import {
   View,
   Text,
@@ -16,6 +21,7 @@ import {
 import { Card, TextInput, Button } from "react-native-paper";
 import { Icon, SocialIcon, ListItem, Avatar } from "react-native-elements";
 import * as firebase from "firebase";
+import * as Print from "expo-print";
 
 const patientDetails = ({ navigation, route }) => {
   const win = Dimensions.get("window");
@@ -40,6 +46,193 @@ const patientDetails = ({ navigation, route }) => {
     dosage3,
     doctorSuggestion,
   } = route.params;
+
+  const htmlContent = `
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <style>
+       .patient-table{
+          border-collapse: collapse;
+          margin:auto;
+          width: 100%;
+  
+       }
+       .patient{
+          margin-top: 50px;
+          
+       }
+       
+  
+      </style>
+    </head>
+    <body>
+        <div class="table1">
+          <table border="1px" cellpadding="10" cellspacing="2" bordercolor="#b0b0b0" style="color:#03574a">
+              <tr>
+                <th bgcolor="#32a0a8"><font color="white">OUR MOTO IS TO PREVENT BLINDNESS</font></th>
+                <th>Mob. 98720-01512</th>
+              </tr>
+              <tr>
+                <th bgcolor="#32a0a8"><font color="white">ANIL EYE CARE CENTER</font></th>
+                <th>अनिल आई केयर सेंटर</th>
+              </tr>
+              <tr colspan="2">
+                <td>
+                  Dharamgarh Road, Ward No. 4,<br />Preet Vihar, Hazara Halwai Wali
+                  Gali, Lalru Mandi (Mohali)
+                </td>
+                <td>
+                  धर्मगढ़ रोड, वार्ड नंबर 4,<br />
+                  प्रीत विहार, हजारा हलवाई वाली गली, लालरू मंडी (मोहाली)
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  Supported by Pracheen Shiv Mandir Charitable trust (Reg.4810) VPO.
+                  Muli Jagra Chadigarh
+                </td>
+              </tr>
+              <tr>
+                <td text-align="left">
+                  <b>Dr. Ashapritpal Kaur<br /></b>
+                  M.B.B.S, M.S Ophthalmology <br />
+                  Phaco Medical Retinal Specialist & Squint Surgeon
+                </td>
+                <td text-align="left">
+                  <b>Dr. Vartika Anand<br /></b>
+                  M.B.B.S, M.S Ophthalmology <br />
+                  Ex. SR Gian Sagar Medical College <br />
+                  Consultant Surgeon Guru Teg Bahadur Eye Hospital, Patiala
+                </td>
+              </tr>
+              <tr>
+                <td text-align="left" colspan="2">
+                  <b>Optom. ANIL VISHWAS MEHTA<br /></b>
+                  <b>OCI Registration No. 12 2015 951 <br /></b>
+                  Master in Optometry and Ophthalmic Technology<br />
+                  Apprenticeship holder from General Hospital Sector-16, Chandigarh
+                  <br />
+                  <ul>
+                    <li>Ex. Ophthalmic Asst. P.C Sharma Eye Hospital Ambala city</li>
+                    <li>Ex. Ophthalmic Asst J. P Eye Hospital, Mohali</li>
+                    <li>Ex. Ophthalmic Asst Pannu Eye Hospital, Ropar</li>
+                    <li>
+                      Ex. Ophthalmic Officer Gian Sagar Medical College & Hospital
+                    </li>
+                    <li>
+                      Presently working as Branch Head Pannu Eye Hospital, Chamkaur
+                      Sahib.
+                    </li>
+                    <li>
+                      भूतपूर्व ऑप्थेल्मिक सहायक पी. सी. शर्मा आई हॉस्पिटल अंबाला शहर
+                    </li>
+                    <li>भूतपूर्व ऑप्थेल्मिक सहायक जे. पी. नेत्र अस्पताल, मोहाली</li>
+                    <li>भूतपूर्व ऑप्थेल्मिक सहायक पन्नू आई हॉस्पिटल, रोपड़</li>
+                    <li>
+                      भूतपूर्व ऑप्थेल्मिक अफ़सर ज्ञान सागर मेडिकल कॉलेज एंड हॉस्पिटल
+                    </li>
+                    <li>
+                      वर्तमान में शाखा प्रमुख पन्नू आई अस्पताल, चामकौर साहिब में कार्यरत
+                      हैं।
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </table>
+        </div>
+        
+      <div class="patient">
+          <table class="patient-table" border="1px" cellpadding="10" bordercolor="#d6d6d6" style="color:#03574a">
+              <tr >
+                 <th colspan="2">Patient Details</th> 
+              </tr>
+              
+              <tr>
+                  <td><b>ID</b></td>
+                  <td>${patientId}</td>
+              </tr>
+              <tr>
+                  <td><b>Name</b></td>
+                  <td>${name}</td>
+              </tr>
+              <tr>
+                  <td><b>Gender</b></td>
+                  <td>${patientgender}</td>
+              </tr>
+              <tr>
+                  <td><b>Visit Date</b></td>
+                  <td>${visitDate}</td>
+              </tr>
+              <tr>
+                  <td><b>Phone</b></td>
+                  <td>${phoneNumber}</td>
+              </tr>
+              </table>
+              </div>
+          
+              <div class="patient">
+        <table class="patient-table" border="1px" cellpadding="10" bordercolor="#d6d6d6" style="color:#03574a">
+            <tr >
+               <th colspan="3">Medical Details</th> 
+            </tr>
+            
+            <tr>
+            <th></th>
+                <th>Medicine</th>
+                <th>Dosage</th>
+            </tr>
+            <tr>
+            <th>Treatment-1</th>
+                <td>${treatment1}</td>
+                <td>${dosage1}</td>
+            </tr>
+            <tr>
+            <th>Treatment-2</th>
+            <td>${treatment2}</td>
+            <td>${dosage2}</td>
+            </tr>
+            <tr>
+            <th>Treatment-3</th>
+            <td>${treatment3}</td>
+            <td>${dosage3}</td>
+            </tr>
+            <tr>
+                <th>Suggestion</th>
+                <td colspan="2">${doctorSuggestion}</td>
+            </tr>
+          </table>
+      </div>
+      
+      
+    </body>
+  </html>
+  
+`;
+
+  const createAndSavePDF = async (html) => {
+    try {
+      const { uri } = await Print.printToFileAsync({ html });
+      if (Platform.OS === "ios") {
+        await Sharing.shareAsync(uri);
+      } else {
+        const permission = await MediaLibrary.requestPermissionsAsync();
+
+        if (permission.granted) {
+          await MediaLibrary.createAssetAsync(uri);
+          Alert.alert("Success", "PDF saved Successfully in documents", [
+            { text: "OK" },
+          ]);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -83,7 +276,7 @@ const patientDetails = ({ navigation, route }) => {
               dosage2,
               treatment3,
               dosage3,
-              doctorSuggestion
+              doctorSuggestion,
             })
           }
         >
@@ -160,10 +353,14 @@ const patientDetails = ({ navigation, route }) => {
             left={<TextInput.Icon name="cellphone-basic" color="grey" />}
           />
           <View style={styles.emailHead}>
-          <Icon name="email-open-outline" color="grey" type="material-community"/>
-          <Text style={styles.emaill}>Email</Text>
+            <Icon
+              name="email-open-outline"
+              color="grey"
+              type="material-community"
+            />
+            <Text style={styles.emaill}>Email</Text>
           </View>
-          
+
           <TextInput
             placeholder="Email"
             value={email}
@@ -173,8 +370,12 @@ const patientDetails = ({ navigation, route }) => {
             multiline={true}
           />
           <View style={styles.emailHead}>
-          <Icon name="map-marker-radius-outline" color="grey" type="material-community"/>
-          <Text style={styles.emaill}>Address</Text>
+            <Icon
+              name="map-marker-radius-outline"
+              color="grey"
+              type="material-community"
+            />
+            <Text style={styles.emaill}>Address</Text>
           </View>
           <TextInput
             placeholder="Address"
@@ -187,8 +388,12 @@ const patientDetails = ({ navigation, route }) => {
           <Text style={styles.detailsText}>Medical Details</Text>
 
           <View style={styles.emailHead}>
-          <Icon name="account-clock-outline" color="grey" type="material-community"/>
-          <Text style={styles.emaill}>Patient History</Text>
+            <Icon
+              name="account-clock-outline"
+              color="grey"
+              type="material-community"
+            />
+            <Text style={styles.emaill}>Patient History</Text>
           </View>
           <TextInput
             placeholder="Patient History"
@@ -199,8 +404,12 @@ const patientDetails = ({ navigation, route }) => {
             multiline={true}
           />
           <View style={styles.emailHead}>
-          <Icon name="alert-decagram-outline" color="grey" type="material-community"/>
-          <Text style={styles.emaill}>C/O</Text>
+            <Icon
+              name="alert-decagram-outline"
+              color="grey"
+              type="material-community"
+            />
+            <Text style={styles.emaill}>C/O</Text>
           </View>
           <TextInput
             placeholder="C/O"
@@ -211,8 +420,8 @@ const patientDetails = ({ navigation, route }) => {
             multiline={true}
           />
           <View style={styles.emailHead}>
-          <Icon name="doctor" color="grey" type="material-community"/>
-          <Text style={styles.emaill}>Diagnosis</Text>
+            <Icon name="doctor" color="grey" type="material-community" />
+            <Text style={styles.emaill}>Diagnosis</Text>
           </View>
           <TextInput
             placeholder="Diagnosis"
@@ -223,8 +432,12 @@ const patientDetails = ({ navigation, route }) => {
             multiline={true}
           />
           <View style={styles.emailHead}>
-          <Icon name="alarm-light-outline" color="grey" type="material-community"/>
-          <Text style={styles.treatment}>Treatment-1</Text>
+            <Icon
+              name="alarm-light-outline"
+              color="grey"
+              type="material-community"
+            />
+            <Text style={styles.treatment}>Treatment-1</Text>
           </View>
           <TextInput
             placeholder="Treatment-1"
@@ -235,8 +448,12 @@ const patientDetails = ({ navigation, route }) => {
             multiline={true}
           />
           <View style={styles.emailHead}>
-          <Icon name="progress-clock" color="grey" type="material-community"/>
-          <Text style={styles.emaill}>Dosage-1</Text>
+            <Icon
+              name="progress-clock"
+              color="grey"
+              type="material-community"
+            />
+            <Text style={styles.emaill}>Dosage-1</Text>
           </View>
           <TextInput
             placeholder="Dosage-1"
@@ -247,8 +464,12 @@ const patientDetails = ({ navigation, route }) => {
             multiline={true}
           />
           <View style={styles.emailHead}>
-          <Icon name="alarm-light-outline" color="grey" type="material-community"/>
-          <Text style={styles.treatment}>Treatment-2</Text>
+            <Icon
+              name="alarm-light-outline"
+              color="grey"
+              type="material-community"
+            />
+            <Text style={styles.treatment}>Treatment-2</Text>
           </View>
           <TextInput
             placeholder="Treatment-2"
@@ -259,8 +480,12 @@ const patientDetails = ({ navigation, route }) => {
             multiline={true}
           />
           <View style={styles.emailHead}>
-          <Icon name="progress-clock" color="grey" type="material-community"/>
-          <Text style={styles.emaill}>Dosage-2</Text>
+            <Icon
+              name="progress-clock"
+              color="grey"
+              type="material-community"
+            />
+            <Text style={styles.emaill}>Dosage-2</Text>
           </View>
           <TextInput
             placeholder="Dosage-2"
@@ -271,8 +496,12 @@ const patientDetails = ({ navigation, route }) => {
             multiline={true}
           />
           <View style={styles.emailHead}>
-          <Icon name="alarm-light-outline" color="grey" type="material-community"/>
-          <Text style={styles.treatment}>Treatment-3</Text>
+            <Icon
+              name="alarm-light-outline"
+              color="grey"
+              type="material-community"
+            />
+            <Text style={styles.treatment}>Treatment-3</Text>
           </View>
           <TextInput
             placeholder="Treatment-3"
@@ -283,8 +512,12 @@ const patientDetails = ({ navigation, route }) => {
             multiline={true}
           />
           <View style={styles.emailHead}>
-          <Icon name="progress-clock" color="grey" type="material-community"/>
-          <Text style={styles.emaill}>Dosage-3</Text>
+            <Icon
+              name="progress-clock"
+              color="grey"
+              type="material-community"
+            />
+            <Text style={styles.emaill}>Dosage-3</Text>
           </View>
           <TextInput
             placeholder="Dosage-3"
@@ -305,24 +538,24 @@ const patientDetails = ({ navigation, route }) => {
           <Button
             onPress={() => {
               navigation.navigate("newVisit1", {
-              patientgender,
-              address,
-              age,
-              patientId,
-              name,
-              phoneNumber,
-              email,
-              history,
-              CO,
-              diagnosis,
-              treatment1,
-              dosage1,
-              treatment2,
-              dosage2,
-              treatment3,
-              dosage3,
-              doctorSuggestion
-            })
+                patientgender,
+                address,
+                age,
+                patientId,
+                name,
+                phoneNumber,
+                email,
+                history,
+                CO,
+                diagnosis,
+                treatment1,
+                dosage1,
+                treatment2,
+                dosage2,
+                treatment3,
+                dosage3,
+                doctorSuggestion,
+              });
             }}
             icon="account-plus-outline"
             mode="contained"
@@ -330,7 +563,9 @@ const patientDetails = ({ navigation, route }) => {
           >
             Repeat Visit
           </Button>
-
+          <TouchableOpacity style={styles.button2} onPress={() => createAndSavePDF(htmlContent)}>
+            <Text style={styles.pdf}>Generate PDF</Text>
+          </TouchableOpacity>
         </ScrollView>
       </Card>
     </SafeAreaView>
@@ -366,7 +601,7 @@ const styles = StyleSheet.create({
     top: 160,
     padding: 15,
     paddingBottom: 25,
-    height: 530,
+    height: "75%",
   },
   row: {
     flexDirection: "row",
@@ -398,20 +633,20 @@ const styles = StyleSheet.create({
   inputgender: {
     width: 150,
   },
-  emailHead:{
-    flexDirection:"row",
-    alignItems:"center",
+  emailHead: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  emaill:{
-    marginLeft:5,
-    color: "grey"
+  emaill: {
+    marginLeft: 5,
+    color: "grey",
   },
-  treatment:{
-    marginLeft:5,
-    color: "red"
+  treatment: {
+    marginLeft: 5,
+    color: "red",
   },
   button: {
-    width: 150,
+    width: "55%",
     // marginLeft: 86,
     padding: 5,
     marginTop: 20,
@@ -420,6 +655,19 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
   },
+  button2:{
+    padding: 5,
+    marginTop: 5,
+    marginBottom: 30,
+    alignItems: "center",
+    marginLeft: "auto",
+    marginRight: "auto",
+    
+  },
+  pdf:{
+    color: "red",
+    fontSize: 18,
+  }
 });
 
 export default patientDetails;

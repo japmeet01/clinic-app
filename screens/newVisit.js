@@ -678,8 +678,8 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 32,
     color: "white",
-    marginLeft: 40,
-    marginRight: 30,
+    marginLeft: "16%",
+    marginRight: "12%",
   },
   save: {
     color: "white",
@@ -690,21 +690,21 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     position: "absolute",
     top: 170,
-    padding: 15,
-    height: 500,
+    padding: "8%",
+    height: "70%",
   },
   input: {
-    margin: 15,
     marginTop: 10,
+    marginBottom: 10,
     backgroundColor: "#f0f0f0",
   },
   dropdown: {
-    margin: 15,
+    // margin: 15,
     marginTop: 10,
-    width: 265,
     backgroundColor: "#f0f0f0",
     height: 60,
     borderColor: "#878787",
+    marginBottom: 10,
   },
   button: {
     width: 130,
@@ -714,16 +714,16 @@ const styles = StyleSheet.create({
     // marginBottom: 30,
   },
   subheading: {
-    marginLeft: 20,
+    marginLeft: "2%",
     color: "red",
     fontSize: 17,
   },
   subheading2: {
-    marginLeft: 20,
+    marginLeft: "2%",
     fontSize: 17,
   },
   category: {
-    marginLeft: 20,
+    marginLeft: "2%",
     fontSize: 25,
     color: "#280080",
   },

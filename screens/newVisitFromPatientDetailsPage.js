@@ -234,6 +234,7 @@ const addPatientPage = ({ navigation, route }) => {
   }, []);
 
   function editData() {
+    if(patientvisitDate !==""){
     const patientInfo = firebase.database().ref("patientInfo");
     patientInfo.child(Id).update({
       patientName: Name,
@@ -391,6 +392,10 @@ const addPatientPage = ({ navigation, route }) => {
     Alert.alert("Success", "Details Updated Succesfully", [{ text: "OK" }]);
     navigation.navigate("Home");
   }
+  else{
+    Alert.alert("Alert", "Please enter visit date.", [{ text: "OK" }]);
+  }
+}
 
   return (
     <SafeAreaView style={styles.container}>
@@ -893,7 +898,7 @@ const styles = StyleSheet.create({
     top: 160,
     padding: 15,
     paddingBottom: 25,
-    height: 460,
+    height: "70%",
   },
   input: {
     marginTop: 20,
