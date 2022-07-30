@@ -18,27 +18,27 @@ import { Icon, SocialIcon, ListItem, Avatar } from "react-native-elements";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as firebase from "firebase";
 
-
 const LoginPage = ({ navigation }) => {
   const win = Dimensions.get("window");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function login(){
-    firebase.auth().signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      // Signed in
-      navigation.navigate("Home");
-    })
-    .catch((error) => {
+  function login() {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        // Signed in
+        navigation.navigate("Home");
+      })
+      .catch((error) => {
         Alert.alert("Error", "Enter correct email and password", [
-            { text: "OK" },
-          ]);
-    });
+          { text: "OK" },
+        ]);
+      });
   }
 
-  
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -66,6 +66,7 @@ const LoginPage = ({ navigation }) => {
             label="Password"
             value={password}
             onChangeText={(text) => setPassword(text)}
+            secureTextEntry={true}
             mode="outlined"
             style={styles.input}
           />
@@ -79,7 +80,6 @@ const LoginPage = ({ navigation }) => {
           >
             Login
           </Button>
-          
         </KeyboardAwareScrollView>
       </Card>
     </SafeAreaView>
@@ -126,8 +126,6 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
   },
-
-
 });
 
 export default LoginPage;

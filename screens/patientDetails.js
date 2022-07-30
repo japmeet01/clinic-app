@@ -2,9 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import { Dimensions } from "react-native";
 import * as MediaLibrary from "expo-media-library";
-import * as FileSystem from "expo-file-system";
-import * as IntentLauncher from "expo-intent-launcher";
-
+import { printToFileAsync } from "expo-print";
+import { shareAsync } from "expo-sharing";
 
 import {
   View,
@@ -75,7 +74,7 @@ const patientDetails = ({ navigation, route }) => {
           <table border="1px" cellpadding="10" cellspacing="2" bordercolor="#b0b0b0" style="color:#03574a">
               <tr>
                 <th bgcolor="#32a0a8"><font color="white">OUR MOTO IS TO PREVENT BLINDNESS</font></th>
-                <th>Mob. 98720-01512</th>
+                <th>Mob. **********</th>
               </tr>
               <tr>
                 <th bgcolor="#32a0a8"><font color="white">ANIL EYE CARE CENTER</font></th>
@@ -83,18 +82,15 @@ const patientDetails = ({ navigation, route }) => {
               </tr>
               <tr colspan="2">
                 <td>
-                  Dharamgarh Road, Ward No. 4,<br />Preet Vihar, Hazara Halwai Wali
-                  Gali, Lalru Mandi (Mohali)
+                  Dharamgarh Road, Ward No. 4
                 </td>
                 <td>
-                  धर्मगढ़ रोड, वार्ड नंबर 4,<br />
-                  प्रीत विहार, हजारा हलवाई वाली गली, लालरू मंडी (मोहाली)
+                  धर्मगढ़ रोड, वार्ड नंबर 4
                 </td>
               </tr>
               <tr>
                 <td colspan="2">
-                  Supported by Pracheen Shiv Mandir Charitable trust (Reg.4810) VPO.
-                  Muli Jagra Chadigarh
+                  Supported by Pracheen Shiv Mandir Charitable trust 
                 </td>
               </tr>
               <tr>
@@ -113,7 +109,6 @@ const patientDetails = ({ navigation, route }) => {
               <tr>
                 <td text-align="left" colspan="2">
                   <b>Optom. ANIL VISHWAS MEHTA<br /></b>
-                  <b>OCI Registration No. 12 2015 951 <br /></b>
                   Master in Optometry and Ophthalmic Technology<br />
                   Apprenticeship holder from General Hospital Sector-16, Chandigarh
                   <br />
@@ -123,22 +118,6 @@ const patientDetails = ({ navigation, route }) => {
                     <li>Ex. Ophthalmic Asst Pannu Eye Hospital, Ropar</li>
                     <li>
                       Ex. Ophthalmic Officer Gian Sagar Medical College & Hospital
-                    </li>
-                    <li>
-                      Presently working as Branch Head Pannu Eye Hospital, Chamkaur
-                      Sahib.
-                    </li>
-                    <li>
-                      भूतपूर्व ऑप्थेल्मिक सहायक पी. सी. शर्मा आई हॉस्पिटल अंबाला शहर
-                    </li>
-                    <li>भूतपूर्व ऑप्थेल्मिक सहायक जे. पी. नेत्र अस्पताल, मोहाली</li>
-                    <li>भूतपूर्व ऑप्थेल्मिक सहायक पन्नू आई हॉस्पिटल, रोपड़</li>
-                    <li>
-                      भूतपूर्व ऑप्थेल्मिक अफ़सर ज्ञान सागर मेडिकल कॉलेज एंड हॉस्पिटल
-                    </li>
-                    <li>
-                      वर्तमान में शाखा प्रमुख पन्नू आई अस्पताल, चामकौर साहिब में कार्यरत
-                      हैं।
                     </li>
                   </ul>
                 </td>
@@ -214,25 +193,34 @@ const patientDetails = ({ navigation, route }) => {
   
 `;
 
-  const createAndSavePDF = async (html) => {
-    try {
-      const { uri } = await Print.printToFileAsync({ html });
-      if (Platform.OS === "ios") {
-        await Sharing.shareAsync(uri);
-      } else {
-        const permission = await MediaLibrary.requestPermissionsAsync();
+  let createAndSavePDF = async () => {
+    const file = await printToFileAsync({
+      html: htmlContent,
+      base64: false,
+    });
 
-        if (permission.granted) {
-          await MediaLibrary.createAssetAsync(uri);
-          Alert.alert("Success", "PDF saved Successfully in documents", [
-            { text: "OK" },
-          ]);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    await shareAsync(file.uri);
   };
+
+  // let createAndSavePDF = async (html) => {
+  //   try {
+  //     const { uri } = await Print.printToFileAsync({ html });
+  //     if (Platform.OS === "ios") {
+  //       await Sharing.shareAsync(uri);
+  //     } else {
+  //       const permission = await MediaLibrary.requestPermissionsAsync();
+
+  //       if (permission.granted) {
+  //         await MediaLibrary.createAssetAsync(uri);
+  //         Alert.alert("Success", "PDF saved Successfully in documents", [
+  //           { text: "OK" },
+  //         ]);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -563,7 +551,10 @@ const patientDetails = ({ navigation, route }) => {
           >
             Repeat Visit
           </Button>
-          <TouchableOpacity style={styles.button2} onPress={() => createAndSavePDF(htmlContent)}>
+          <TouchableOpacity
+            style={styles.button2}
+            onPress={() => createAndSavePDF(htmlContent)}
+          >
             <Text style={styles.pdf}>Generate PDF</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -655,19 +646,18 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
   },
-  button2:{
+  button2: {
     padding: 5,
     marginTop: 5,
     marginBottom: 30,
     alignItems: "center",
     marginLeft: "auto",
     marginRight: "auto",
-    
   },
-  pdf:{
+  pdf: {
     color: "red",
     fontSize: 18,
-  }
+  },
 });
 
 export default patientDetails;

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Clinic App Version1",
-    "slug": "clinic-app-version1",
+    "name": "Clinic_App",
+    "slug": "Clinic_App",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,9 +13,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -24,7 +22,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.japmeet01.clinicappversion1"
+      "package": "com.japmeet01.Clinic_App"
     },
     "web": {
       "favicon": "./assets/favicon.png"
